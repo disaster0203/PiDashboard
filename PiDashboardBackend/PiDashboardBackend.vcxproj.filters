@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="manager">
+      <UniqueIdentifier>{e9aabd1d-da16-4f4f-bcb0-2280f9fb6d8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="dtos">
+      <UniqueIdentifier>{c964092f-a828-426f-80c9-6977f0d3f66f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{e7e26ae7-fdd2-4c2b-9123-ece6bda8d5b2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\manager\db_manager_extremas.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\manager\db_manager_table_management.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+    <ClCompile Include="src\manager\db_manager_sensors.cpp">
+      <Filter>manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\manager\db_manager.h">
+      <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dto\query_object.h">
+      <Filter>dtos</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dto\extremas_dto.h">
+      <Filter>dtos</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dto\sensor_dto.h">
+      <Filter>dtos</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\time_converter.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
