@@ -35,16 +35,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\bme280.c" />
+    <ClCompile Include="src\drivers\bme280_barometer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\manager\db_manager_table_management.cpp" />
     <ClCompile Include="src\manager\db_manager_sensors.cpp" />
     <ClCompile Include="src\manager\db_manager_extremas.cpp" />
+    <ClCompile Include="src\manager\i2c_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\bme280.h" />
+    <ClInclude Include="src\bme280_defs.h" />
+    <ClInclude Include="src\drivers\bme280_barometer.h" />
+    <ClInclude Include="src\drivers\bme280_barometer_constants.h" />
+    <ClInclude Include="src\drivers\bme280_barometer_definitions.h" />
     <ClInclude Include="src\dto\sensor_dto.h" />
     <ClInclude Include="src\dto\extremas_dto.h" />
     <ClInclude Include="src\dto\query_object.h" />
     <ClInclude Include="src\manager\db_manager.h" />
+    <ClInclude Include="src\manager\i2c_manager.h" />
     <ClInclude Include="src\utils\time_converter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
