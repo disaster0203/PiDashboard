@@ -1,4 +1,5 @@
 #include "manager/db_manager.h"
+#include "drivers/bme280_barometer.h"
 #include "dto/sensor_dto.h"
 #include "utils/time_converter.h"
 
@@ -8,6 +9,8 @@
 #include <chrono>
 #include <ctime>
 #include <mysql/mysql.h>
+
+driver::sensors::bme280::barometer* bme280;
 
 void print_menu()
 {
@@ -24,6 +27,11 @@ void print_menu()
 	std::cout << "10: Delete database\n";
 	std::cout << "11: Create table\n";
 	std::cout << "12: Create database\n";
+	std::cout << "------------------------\n";
+	std::cout << "13: Get All\n";
+	std::cout << "14: Get Temperature\n";
+	std::cout << "15: Get Pressure\n";
+	std::cout << "16: Get Humidity\n";
 }
 
 void print(dto::sensor_dto* entry)
@@ -42,6 +50,13 @@ int main()
 	srand((int)time(0));
 
 	db_manager* mng = new db_manager("localhost", "test", "password123", "pi_sensor_db");
+	driver::sensors::bme280::barometer* bme280 = new driver::sensors::bme280::barometer();
+	bme280->init();
+	bme280->set_settings(driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_2X,
+		driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_16X,
+		driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_1X,
+		driver::sensors::bme280::bme280_filter::FILTER_16X,
+		driver::sensors::bme280::bme280_standby_time::STANDBY_250_MS);
 
 	int choose;
 	while (true)
@@ -104,6 +119,43 @@ int main()
 			mng->use_database("pi_sensor_db");
 			std::cout << "Created database 'pi_sensor_db'";
 			break;
+		case 13:
+		{
+			double temp, press, hum;
+
+			if (bme280->get_all_data(temp, press, hum) == 0)
+			{
+				std::cout << "Temperature: " << temp << "C  Pressure: " << press << "hPa  Humidity: " << hum << "%" << std::endl;
+			}
+		}
+		break;
+		case 14:
+		{
+			double temp;
+			if (bme280->get_temperature_data(temp) == 0)
+			{
+				std::cout << "Temperature: " << temp << "C" << std::endl;
+			}
+		}
+		break;
+		case 15:
+		{
+			double press;
+			if (bme280->get_pressure_data(press) == 0)
+			{
+				std::cout << "Pressure: " << press << "hPa" << std::endl;
+			}
+		}
+		break;
+		case 16:
+		{
+			double hum;
+			if (bme280->get_humidity_data(hum) == 0)
+			{
+				std::cout << "Humidity: " << hum << "%" << std::endl;
+			}
+		}
+		break;
 		}
 	}
 
