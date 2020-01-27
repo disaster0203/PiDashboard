@@ -1,22 +1,22 @@
 #include "i2c_manager.h"
 
-int8_t manager::i2c_manager::open_device(const char* name, uint8_t address, int& handle)
+int8_t manager::i2c_manager::open_device(const char* path, uint8_t address, int& handle)
 {
-	handle = open(name, O_RDWR);
+	handle = open(path, O_RDWR);
 
 	if (!device_open(handle))
 	{
-		std::cerr << "Could not load I2C-Module! " << name << " " << strerror(errno) << std::endl;
+		std::cerr << "Could not load I2C-Module! " << path << " " << strerror(errno) << std::endl;
 		return -1;
 	}
 
 	if (ioctl(handle, I2C_SLAVE, address) < 0)
 	{
-		std::cerr << name << " addr: 0x" << std::hex << address << std::dec << " error: " << strerror(errno) << std::endl;
+		std::cerr << path << " addr: 0x" << std::hex << address << std::dec << " error: " << strerror(errno) << std::endl;
 		return -1;
 	}
 
-	std::cout << "Channel #" << handle << " for " << name << "0x" << std::hex << address << std::dec << " is open." << std::endl;
+	std::cout << "Channel #" << handle << " for " << path << "0x" << std::hex << address << std::dec << " is open." << std::endl;
 	return 0;
 }
 
