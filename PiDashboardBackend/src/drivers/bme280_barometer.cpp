@@ -1,13 +1,22 @@
 #include "bme280_barometer.h"
 
-int8_t driver::sensors::bme280::barometer::init(uint8_t device_address)
+int8_t driver::sensors::bme280::barometer::init(uint8_t device_address, 
+	std::function<int8_t(int, uint8_t, uint8_t*, uint16_t)> read_function,
+	std::function<int8_t(int, uint8_t, const uint8_t*, uint16_t)> write_function,
+	std::function<int8_t(const char*, uint8_t, int&)> open_device_function,
+	std::function<int8_t(int&)> close_device_function)
 {
 	m_device = bme280_device();
 	m_device.dev_id = device_address;
+	m_read_function = read_function;
+	m_write_function = write_function;
+	m_open_device_function = open_device_function;
+	m_close_device_function = close_device_function;
+
 	uint8_t chip_id = 0;
 	uint8_t try_count = 5;
 
-	if (manager::i2c_manager::open_device(manager::i2c_manager::DEFAULT_PI_I2C_ADDRESS, device_address, m_file_handle) != OK)
+	if (m_open_device_function(manager::i2c_manager::DEFAULT_PI_I2C_ADDRESS, device_address, m_file_handle) != OK)
 	{
 		std::cerr << "BME280 [init] Error: Could not establish connection with device via WiringPi" << std::endl;
 		return DEVICE_NOT_FOUND;
@@ -15,7 +24,7 @@ int8_t driver::sensors::bme280::barometer::init(uint8_t device_address)
 
 	while (try_count)
 	{
-		if (manager::i2c_manager::read_from_device(m_file_handle, CHIP_ID_ADDR, &chip_id, 1) == OK)
+		if (m_read_function(m_file_handle, CHIP_ID_ADDR, &chip_id, 1) == OK)
 		{
 			m_device.chip_id = chip_id;
 			if (soft_reset() == OK)
@@ -37,13 +46,19 @@ int8_t driver::sensors::bme280::barometer::init(uint8_t device_address)
 	return OK;
 }
 
+int8_t driver::sensors::bme280::barometer::close()
+{
+	m_close_device_function(m_file_handle);
+	return int8_t();
+}
+
 int8_t driver::sensors::bme280::barometer::set_pressure_and_temperature_oversampling(uint8_t desired_settings, struct settings_data* settings)
 {
 	int8_t rslt;
 	uint8_t reg_addr = MEASUREMENT_OVERSAMPLING_ADDR;
 	uint8_t reg_data;
 
-	if (manager::i2c_manager::read_from_device(m_file_handle, reg_addr, &reg_data, 1) != OK)
+	if (m_read_function(m_file_handle, reg_addr, &reg_data, 1) != OK)
 	{
 		std::cerr << "BME280 [set_pressure_and_temperature_oversampling] Error: Could not read pressure and temperature oversampling setting from device" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -59,7 +74,7 @@ int8_t driver::sensors::bme280::barometer::set_pressure_and_temperature_oversamp
 	}
 
 	/* Write the oversampling settings in the register */
-	if (manager::i2c_manager::write_to_device(m_file_handle, reg_addr, &reg_data, 1) != OK)
+	if (m_write_function(m_file_handle, reg_addr, &reg_data, 1) != OK)
 	{
 		std::cerr << "BME280 [set_pressure_and_temperature_oversampling] Error: Could not write pressure and temperature oversampling settings to device" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -79,20 +94,20 @@ int8_t driver::sensors::bme280::barometer::set_humidity_oversampling(struct sett
 	 * write operation to ctrl_meas register
 	 */
 	ctrl_hum = settings->humidity_oversampling & HUMIDITY_MASK;
-	if (manager::i2c_manager::write_to_device(m_file_handle, reg_addr, &ctrl_hum, 1) != OK)
+	if (m_write_function(m_file_handle, reg_addr, &ctrl_hum, 1) != OK)
 	{
 		std::cerr << "BME280 [set_humidity_oversampling] Error: Could not write humidity setting to device" << std::endl;
 		return COMMUNICATION_FAIL;
 	}
 
 	reg_addr = MEASUREMENT_OVERSAMPLING_ADDR;
-	if (manager::i2c_manager::read_from_device(m_file_handle, reg_addr, &ctrl_meas, 1) != OK)
+	if (m_read_function(m_file_handle, reg_addr, &ctrl_meas, 1) != OK)
 	{
 		std::cerr << "BME280 [set_humidity_oversampling] Error: Could not read settings from device" << std::endl;
 		return COMMUNICATION_FAIL;
 	}
 
-	if (manager::i2c_manager::write_to_device(m_file_handle, reg_addr, &ctrl_meas, 1) != OK)
+	if (m_write_function(m_file_handle, reg_addr, &ctrl_meas, 1) != OK)
 	{
 		std::cerr << "BME280 [set_humidity_oversampling] Error: Could not write settings to device" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -106,7 +121,7 @@ int8_t driver::sensors::bme280::barometer::set_filter_and_standby_settings(uint8
 	uint8_t reg_addr = CONFIG_ADDR;
 	uint8_t reg_data;
 
-	if (manager::i2c_manager::read_from_device(m_file_handle, reg_addr, &reg_data, 1) != OK)
+	if (m_read_function(m_file_handle, reg_addr, &reg_data, 1) != OK)
 	{
 		std::cerr << "BME280 [set_filter] Error: Could not read filter and standby settings from device" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -122,7 +137,7 @@ int8_t driver::sensors::bme280::barometer::set_filter_and_standby_settings(uint8
 
 	}
 
-	if (manager::i2c_manager::write_to_device(m_file_handle, reg_addr, &reg_data, 1) != OK)
+	if (m_write_function(m_file_handle, reg_addr, &reg_data, 1) != OK)
 	{
 		std::cerr << "BME280 [set_filter] Error: Could not write filter and standby settings to device" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -144,14 +159,14 @@ int8_t driver::sensors::bme280::barometer::set_sensor_mode(enum bme280_mode mode
 	{
 		uint8_t reg_data;
 
-		if (manager::i2c_manager::read_from_device(m_file_handle, MODE_ADDR, &reg_data, 1) != OK)
+		if (m_read_function(m_file_handle, MODE_ADDR, &reg_data, 1) != OK)
 		{
 			std::cerr << "BME280 [set_sensor_mode] Error: Could not read settings from device" << std::endl;
 			return COMMUNICATION_FAIL;
 		}
 
 		reg_data = ((reg_data & ~((SENSOR_MODE_MASK))) | ((uint8_t)mode & (SENSOR_MODE_MASK)));
-		if (manager::i2c_manager::write_to_device(m_file_handle, MODE_ADDR, &reg_data, 1) != OK)
+		if (m_write_function(m_file_handle, MODE_ADDR, &reg_data, 1) != OK)
 		{
 			std::cerr << "BME280 [set_sensor_mode] Error: Could not write new sensor mode" << std::endl;
 			return COMMUNICATION_FAIL;
@@ -166,7 +181,7 @@ int8_t driver::sensors::bme280::barometer::get_sensor_mode(enum bme280_mode& mod
 	uint8_t result = 0;
 
 	/* Read the power mode register */
-	if (manager::i2c_manager::read_from_device(m_file_handle, MODE_ADDR, &result, 1) != OK)
+	if (m_read_function(m_file_handle, MODE_ADDR, &result, 1) != OK)
 	{
 		std::cerr << "BME280 [get_sensor_mode] Error: Could not read device mode" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -255,7 +270,7 @@ int8_t driver::sensors::bme280::barometer::get_settings(struct settings_data* se
 		return NULL_PTR;
 	}
 
-	if (manager::i2c_manager::read_from_device(m_file_handle, HUMIDITY_OVERSAMPLING_ADDR, reg_data, 4) != OK)
+	if (m_read_function(m_file_handle, HUMIDITY_OVERSAMPLING_ADDR, reg_data, 4) != OK)
 	{
 		std::cerr << "BME280 [get_settings] Error: Could not read settings data from device" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -268,7 +283,7 @@ int8_t driver::sensors::bme280::barometer::get_settings(struct settings_data* se
 
 int8_t driver::sensors::bme280::barometer::soft_reset()
 {
-	if (manager::i2c_manager::write_to_device(m_file_handle, SOFT_RESET_ADDR, &SOFT_RESET_VALUE, 1) != OK)
+	if (m_write_function(m_file_handle, SOFT_RESET_ADDR, &SOFT_RESET_VALUE, 1) != OK)
 	{
 		std::cerr << "BME280 [soft_reset] Error: Could not write soft reset command to device" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -280,7 +295,7 @@ int8_t driver::sensors::bme280::barometer::soft_reset()
 	do
 	{
 		usleep(2000);
-		result = manager::i2c_manager::read_from_device(m_file_handle, STATUS_ADDR, &status_reg, 1);
+		result = m_read_function(m_file_handle, STATUS_ADDR, &status_reg, 1);
 	} while ((result == OK) && (try_run--) && (status_reg & STATUS_DURING_UPDATE));
 
 	if (status_reg & STATUS_DURING_UPDATE)
@@ -310,7 +325,7 @@ int8_t driver::sensors::bme280::barometer::get_temperature_data(double& temperat
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = { 0 };
 	struct raw_data raw = { 0 };
-	if (manager::i2c_manager::read_from_device(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
+	if (m_read_function(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
 	{
 		std::cerr << "BME280 [get_temperature_data] Error: Could not read raw data" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -337,7 +352,7 @@ int8_t driver::sensors::bme280::barometer::get_pressure_data(double& pressure)
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = { 0 };
 	struct raw_data raw = { 0 };
-	if (manager::i2c_manager::read_from_device(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
+	if (m_read_function(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
 	{
 		std::cerr << "BME280 [get_pressure_data] Error: Could not read raw data" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -364,7 +379,7 @@ int8_t driver::sensors::bme280::barometer::get_humidity_data(double& humidity)
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = { 0 };
 	struct raw_data raw = { 0 };
-	if (manager::i2c_manager::read_from_device(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
+	if (m_read_function(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
 	{
 		std::cerr << "BME280 [get_humidity_data] Error: Could not read raw data" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -391,7 +406,7 @@ int8_t driver::sensors::bme280::barometer::get_all_data(double& temperature, dou
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = { 0 };
 	struct raw_data raw = { 0 };
-	if (manager::i2c_manager::read_from_device(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
+	if (m_read_function(m_file_handle, DATA_ADDR, reg_data, ALL_DATA_LENGTH) != OK)
 	{
 		std::cerr << "BME280 [get_all_data] Error: Could not read raw data" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -427,7 +442,7 @@ double driver::sensors::bme280::barometer::get_humidity_data(struct raw_data* ra
 int8_t driver::sensors::bme280::barometer::get_calibration_data(struct calibration_data& calibration_data)
 {
 	uint8_t calib_data[TEMPERATURE_PRESSURE_CALIB_DATA_LENGTH] = { 0 };
-	if (manager::i2c_manager::read_from_device(m_file_handle, TEMPERATURE_CALIBRATION_ADDR_1, calib_data, TEMPERATURE_PRESSURE_CALIB_DATA_LENGTH) != OK)
+	if (m_read_function(m_file_handle, TEMPERATURE_CALIBRATION_ADDR_1, calib_data, TEMPERATURE_PRESSURE_CALIB_DATA_LENGTH) != OK)
 	{
 		std::cerr << "BME280 [get_calibration_data] Error: Could not read temperature and pressure calibration data" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -449,7 +464,7 @@ int8_t driver::sensors::bme280::barometer::get_calibration_data(struct calibrati
 	//calib_data[24] (0xA0) is not needed
 	calibration_data.humidity_calibration_addr_1 = calib_data[25];
 
-	if (manager::i2c_manager::read_from_device(m_file_handle, HUMIDITY_CALIBRATION_ADDR_2, calib_data, HUMIDITY_CALIB_DATA_LENGTH) != OK)
+	if (m_read_function(m_file_handle, HUMIDITY_CALIBRATION_ADDR_2, calib_data, HUMIDITY_CALIB_DATA_LENGTH) != OK)
 	{
 		std::cerr << "BME280 [get_calibration_data] Error: Could not read humidity calibration data" << std::endl;
 		return COMMUNICATION_FAIL;
@@ -499,7 +514,7 @@ int8_t driver::sensors::bme280::barometer::parse_raw_data(uint8_t* read_data, st
 int8_t driver::sensors::bme280::barometer::get_all_raw_data(uint8_t* all_data)
 {
 	uint8_t reg_data[COMPLETE_FILE_LENGTH] = { 0 };
-	if (manager::i2c_manager::read_from_device(m_file_handle, FILE_BEGIN, reg_data, COMPLETE_FILE_LENGTH) != OK)
+	if (m_read_function(m_file_handle, FILE_BEGIN, reg_data, COMPLETE_FILE_LENGTH) != OK)
 	{
 		std::cerr << "BME280 [get_all_raw_data] Error: Could not read all file data" << std::endl;
 		return COMMUNICATION_FAIL;

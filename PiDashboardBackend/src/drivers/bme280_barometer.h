@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <cerrno>
 #include <cstring>
+#include <functional>
 
 namespace driver
 {
@@ -40,7 +41,18 @@ namespace driver
 				* \param[in] device_address: The address of the device to open.
 				* \returns 0 if initializing the device was successful, a negative error value otherwise.
 				*/
-				int8_t init(uint8_t device_address = SENSOR_PRIMARY_I2C_ADDR);
+				int8_t init(uint8_t device_address = SENSOR_PRIMARY_I2C_ADDR,
+					std::function<int8_t(int, uint8_t, uint8_t*, uint16_t)> read_function = manager::i2c_manager::read_from_device,
+					std::function<int8_t(int, uint8_t, const uint8_t*, uint16_t)> write_function = manager::i2c_manager::write_to_device,
+					std::function<int8_t(const char*, uint8_t, int&)> open_device_function = manager::i2c_manager::open_device,
+					std::function<int8_t(int&)> close_device_function = manager::i2c_manager::close_device);
+
+				//! Closes a device connection and performs some cleanup.
+				/*!
+				*  Closes a device connection and performs some cleanup.
+				* \returns 0 if closing the device was successful, a negative error value otherwise.
+				*/
+				int8_t close();
 
 				//! Writes temperature and pressure oversampling settings to the device.
 				/*!
@@ -119,7 +131,7 @@ namespace driver
 				//! Measures and returns the current temperature.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] temperature: The measured temperature.
 				* \returns 0 if measuring the temperature was successful, a negative error value otherwise.
@@ -129,7 +141,7 @@ namespace driver
 				//! Measures and returns the current air pressure.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] pressure: The measured air pressure.
 				* \returns 0 if measuring the air pressure was successful, a negative error value otherwise.
@@ -139,7 +151,7 @@ namespace driver
 				//! Measures and returns the current air humidity.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] humidity: The measured air humidity.
 				* \returns 0 if measuring the air humidity was successful, a negative error value otherwise.
@@ -149,7 +161,7 @@ namespace driver
 				//! Measures and returns all three sensor values at once.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] temperature: The measured temperature.
 				* \param[out] pressure: The measured air pressure.
@@ -212,7 +224,7 @@ namespace driver
 				//! Calculates the compensated temperature by using temperature calibration constants and a raw value.
 				/*!
 				*  Calculates the compensated temperature by using temperature calibration constants and a raw value.
-				*  The formula used can be found here https://usermanual.wiki/Pdf/BstBme280Ds00110.1570003573 
+				*  The formula used can be found here https://usermanual.wiki/Pdf/BstBme280Ds00110.1570003573
 				*  in chapter 4.2.3 (page 23, [01.27.2020]).
 				* \param[in] calibration: A object containing the temperature calibration constants.
 				* \param[in] raw_temperature: The raw temperature value to compensate.
@@ -245,7 +257,7 @@ namespace driver
 				//! Calculates the time needed for one complete measurement.
 				/*!
 				*  Depending on the filter and oversampling settings a measurement takes some time to finish.
-				*  This time can be calculated with the formula that can be found here 
+				*  This time can be calculated with the formula that can be found here
 				*  https://usermanual.wiki/Pdf/BstBme280Ds00110.1570003573 in appendix B, 9.1 (page 51, [01.27.2020]).
 				* \param[out] time: The calculated time in milliseconds.
 				* \returns 0 if calculating the time was successful, a negative error value otherwise.
@@ -294,6 +306,10 @@ namespace driver
 
 				bme280_device m_device;
 				int m_file_handle;
+				std::function<int8_t(const char*, uint8_t, int&)> m_open_device_function;
+				std::function<int8_t(int&)> m_close_device_function;
+				std::function<int8_t(int, uint8_t, uint8_t*, uint16_t)> m_read_function;
+				std::function<int8_t(int, uint8_t, const uint8_t*, uint16_t)> m_write_function;
 			};
 		}
 	}

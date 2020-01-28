@@ -81,17 +81,6 @@ namespace manager
 		* \param[in] length: The number of bytes to write.
 		* \returns 0 if writing was successful, a negative error value otherwise.
 		*/
-		static int8_t write_to_device(int handle, uint8_t address, uint8_t* data, uint16_t length);
-
-		//! Writes content to the given address from a buffer.
-		/*!
-		*  Writes content to the given address from a buffer.
-		* \param[in] handle: The handle that will be used to communicate over the i2c bus.
-		* \param[in] address: The file address to write to.
-		* \param[out] data: The buffer containing the content to write.
-		* \param[in] length: The number of bytes to write.
-		* \returns 0 if writing was successful, a negative error value otherwise.
-		*/
 		static int8_t write_to_device(int handle, uint8_t address, const uint8_t* data, uint16_t length);
 
 		static constexpr const char* DEFAULT_PI_I2C_ADDRESS = "/dev/i2c-1";
