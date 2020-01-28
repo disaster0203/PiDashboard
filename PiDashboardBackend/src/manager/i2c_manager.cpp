@@ -1,8 +1,8 @@
 #include "i2c_manager.h"
 
-int8_t manager::i2c_manager::open_device(const char* path, uint8_t address, int& handle)
+int8_t manager::i2c_manager::open_device(const std::string path, uint8_t address, int& handle)
 {
-	handle = open(path, O_RDWR);
+	handle = open(path.c_str(), O_RDWR);
 
 	if (!device_open(handle))
 	{
@@ -46,7 +46,7 @@ bool manager::i2c_manager::device_open(int handle)
 	return (handle > 0);
 }
 
-int8_t manager::i2c_manager::read_from_device(int handle, uint8_t address, uint8_t* data, uint16_t length)
+int8_t manager::i2c_manager::read_from_device(int handle, uint8_t address, std::unique_ptr<uint8_t[]>& data, uint16_t length)
 {
 	if (!device_open(handle))
 	{
@@ -54,13 +54,13 @@ int8_t manager::i2c_manager::read_from_device(int handle, uint8_t address, uint8
 		return -1;
 	}
 
-	data[0] = address;
-	if (write(handle, data, 1) != 1)
+	data.get()[0] = address;
+	if (write(handle, data.get(), 1) != 1)
 	{
 		std::cerr << "Could not got to read position 0x" << std::hex << address << std::dec << ". Error: " << strerror(errno) << std::endl;
 		return -1;
 	}
-	if (read(handle, data, length) < 0)
+	if (read(handle, data.get(), length) < 0)
 	{
 		std::cerr << "Could not read " << length << " bytes starting from 0x" << std::hex << address << std::dec << ". Error: " << strerror(errno) << std::endl;
 		return -1;
@@ -69,7 +69,7 @@ int8_t manager::i2c_manager::read_from_device(int handle, uint8_t address, uint8
 	return 0;
 }
 
-int8_t manager::i2c_manager::write_to_device(int handle, uint8_t address, const uint8_t* data, uint16_t length)
+int8_t manager::i2c_manager::write_to_device(int handle, uint8_t address, const std::unique_ptr<uint8_t[]>& data, uint16_t length)
 {
 	if (!device_open(handle))
 	{
@@ -81,7 +81,7 @@ int8_t manager::i2c_manager::write_to_device(int handle, uint8_t address, const 
 
 	buf = (int8_t*)malloc(length + 1);
 	buf[0] = address;
-	memcpy(buf + 1, data, length);
+	memcpy(buf + 1, data.get(), length);
 	if (write(handle, buf, length + 1) < length)
 	{
 		std::cerr << "Could not write data of length " << length << " to address 0x" << std::hex << address << std::dec << ". Error: " << strerror(errno) << std::endl;
