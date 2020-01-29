@@ -53,7 +53,6 @@ int8_t driver::sensors::bme280::barometer::close()
 
 int8_t driver::sensors::bme280::barometer::set_pressure_and_temperature_oversampling(uint8_t desired_settings, struct settings_data settings)
 {
-	int8_t rslt;
 	uint8_t reg_addr = MEASUREMENT_OVERSAMPLING_ADDR;
 	std::unique_ptr<uint8_t[]> reg_data(new uint8_t[1]);
 
@@ -65,11 +64,11 @@ int8_t driver::sensors::bme280::barometer::set_pressure_and_temperature_oversamp
 
 	if (desired_settings & PRESSURE_SETTING_SELECTION)
 	{
-		reg_data.get()[0] = ((reg_data.get()[0] & ~((PRESSURE_MASK))) | ((settings.pressure_oversampling << (PRESSURE_POS)) & (PRESSURE_MASK)));
+		reg_data.get()[0] = (uint8_t)((reg_data.get()[0] & ~((PRESSURE_MASK))) | ((settings.pressure_oversampling << (PRESSURE_POS)) & (PRESSURE_MASK)));
 	}
 	if (desired_settings & TEMPERATURE_SETTING_SELECTION)
 	{
-		reg_data.get()[0] = ((reg_data.get()[0] & ~((TEMPERATURE_MASK))) | ((settings.temperature_oversampling << (TEMPERATURE_POS)) & (TEMPERATURE_MASK)));
+		reg_data.get()[0] = (uint8_t)((reg_data.get()[0] & ~((TEMPERATURE_MASK))) | ((settings.temperature_oversampling << (TEMPERATURE_POS)) & (TEMPERATURE_MASK)));
 	}
 
 	/* Write the oversampling settings in the register */
@@ -84,13 +83,11 @@ int8_t driver::sensors::bme280::barometer::set_pressure_and_temperature_oversamp
 
 int8_t driver::sensors::bme280::barometer::set_humidity_oversampling(struct settings_data settings)
 {
-	int8_t rslt;
-
 	/* Humidity related changes will be only effective after a
 	 * write operation to ctrl_meas register
 	 */
 	uint8_t reg_addr = HUMIDITY_OVERSAMPLING_ADDR;
-	std::unique_ptr<uint8_t[]> ctrl_hum(new uint8_t[1]{ settings.humidity_oversampling & HUMIDITY_MASK });
+	std::unique_ptr<uint8_t[]> ctrl_hum(new uint8_t[1]{ (uint8_t)(settings.humidity_oversampling & HUMIDITY_MASK) });
 	if (m_write_function(m_file_handle, reg_addr, ctrl_hum, 1) != OK)
 	{
 		std::cerr << "BME280 [set_humidity_oversampling] Error: Could not write humidity setting to device" << std::endl;
@@ -127,11 +124,11 @@ int8_t driver::sensors::bme280::barometer::set_filter_and_standby_settings(uint8
 
 	if (desired_settings & FILTER_SETTING_SELECTION)
 	{
-		reg_data.get()[0] = ((reg_data.get()[0] & ~((FILTER_MASK))) | ((settings.filter << (FILTER_POS)) & (FILTER_MASK)));
+		reg_data.get()[0] = (uint8_t)((reg_data.get()[0] & ~((FILTER_MASK))) | ((settings.filter << (FILTER_POS)) & (FILTER_MASK)));
 	}
 	if (desired_settings & STANDBY_SETTING_SELECTION)
 	{
-		reg_data.get()[0] = ((reg_data.get()[0] & ~((STANDBY_MASK))) | ((settings.standby_time << (STANDBY_POS)) & (STANDBY_MASK)));
+		reg_data.get()[0] = (uint8_t)((reg_data.get()[0] & ~((STANDBY_MASK))) | ((settings.standby_time << (STANDBY_POS)) & (STANDBY_MASK)));
 
 	}
 
@@ -163,7 +160,7 @@ int8_t driver::sensors::bme280::barometer::set_sensor_mode(enum bme280_mode mode
 			return COMMUNICATION_FAIL;
 		}
 
-		reg_data.get()[0] = ((reg_data.get()[0] & ~((SENSOR_MODE_MASK))) | ((uint8_t)mode & (SENSOR_MODE_MASK)));
+		reg_data.get()[0] = (uint8_t)((reg_data.get()[0] & ~((SENSOR_MODE_MASK))) | ((uint8_t)mode & (SENSOR_MODE_MASK)));
 		if (m_write_function(m_file_handle, MODE_ADDR, reg_data, 1) != OK)
 		{
 			std::cerr << "BME280 [set_sensor_mode] Error: Could not write new sensor mode" << std::endl;
@@ -202,7 +199,6 @@ int8_t driver::sensors::bme280::barometer::set_settings(enum bme280_oversampling
 	m_device.settings.standby_time = (uint8_t)standby;
 
 	uint8_t settings_sel = PRESSURE_SETTING_SELECTION | TEMPERATURE_SETTING_SELECTION | HUMIDITY_SETTING_SELECTION | FILTER_SETTING_SELECTION | STANDBY_SETTING_SELECTION;
-	uint8_t reg_data[4];
 	std::unique_ptr<struct settings_data> settings = std::make_unique<struct settings_data>();
 	enum bme280_mode sensor_mode;
 
@@ -452,11 +448,11 @@ int8_t driver::sensors::bme280::barometer::get_calibration_data(struct calibrati
 		return COMMUNICATION_FAIL;
 	}
 
-	calibration_data.temperature_calibration_addr_1 = (((uint16_t)calib_data[1] << 8) | (uint16_t)calib_data[0]);
+	calibration_data.temperature_calibration_addr_1 = (uint16_t)((calib_data[1] << 8) | calib_data[0]);
 	calibration_data.temperature_calibration_addr_2 = (int16_t)(((uint16_t)calib_data[3] << 8) | (uint16_t)calib_data[2]);
 	calibration_data.temperature_calibration_addr_3 = (int16_t)(((uint16_t)calib_data[5] << 8) | (uint16_t)calib_data[4]);
 
-	calibration_data.pressure_calibration_addr_1 = (((uint16_t)calib_data[7] << 8) | (uint16_t)calib_data[6]);
+	calibration_data.pressure_calibration_addr_1 = (uint16_t)((calib_data[7] << 8) | calib_data[6]);
 	calibration_data.pressure_calibration_addr_2 = (int16_t)(((uint16_t)calib_data[9] << 8) | (uint16_t)calib_data[8]);
 	calibration_data.pressure_calibration_addr_3 = (int16_t)(((uint16_t)calib_data[11] << 8) | (uint16_t)calib_data[10]);
 	calibration_data.pressure_calibration_addr_4 = (int16_t)(((uint16_t)calib_data[13] << 8) | (uint16_t)calib_data[12]);
@@ -481,10 +477,10 @@ int8_t driver::sensors::bme280::barometer::get_calibration_data(struct calibrati
 
 	calibration_data.humidity_calibration_addr_2 = (int16_t)(((uint16_t)calib_data[1] << 8) | (uint16_t)calib_data[0]);
 	calibration_data.humidity_calibration_addr_3 = calib_data[2];
-	dig_h4_msb = (int16_t)(int8_t)calib_data[3] * 16;
+	dig_h4_msb = (int16_t)(calib_data[3] * 16);
 	dig_h4_lsb = (int16_t)(calib_data[4] & 0x0F);
 	calibration_data.humidity_calibration_addr_4 = dig_h4_msb | dig_h4_lsb;
-	dig_h5_msb = (int16_t)(int8_t)calib_data[5] * 16;
+	dig_h5_msb = (int16_t)(calib_data[5] * 16);
 	dig_h5_lsb = (int16_t)(calib_data[4] >> 4);
 	calibration_data.humidity_calibration_addr_5 = dig_h5_msb | dig_h5_lsb;
 	calibration_data.humidity_calibration_addr_6 = (int8_t)calib_data[6];
@@ -524,6 +520,11 @@ int8_t driver::sensors::bme280::barometer::get_all_raw_data(std::unique_ptr<uint
 		return COMMUNICATION_FAIL;
 	}
 	all_data = std::move(reg_data);
+
+	for (int i = 0; i <= COMPLETE_FILE_LENGTH; ++i)
+	{
+		std::cout << i << ": " << (int)all_data.get()[i] << std::endl;
+	}
 
 	return OK;
 }
@@ -637,7 +638,7 @@ int8_t driver::sensors::bme280::barometer::calculate_wait_time(double& time)
 
 void driver::sensors::bme280::barometer::sleep_until_ready()
 {
-	usleep(m_device.wait_time * 1000);
+	usleep((__useconds_t)(m_device.wait_time * 1000));
 }
 
 void driver::sensors::bme280::barometer::parse_settings(std::unique_ptr<uint8_t[]>& read_data, std::unique_ptr<struct settings_data>& settings)

@@ -36,7 +36,7 @@ namespace driver
 			static constexpr const uint8_t HUMIDITY_CALIBRATION_ADDR_3 = 0xE3;
 			static constexpr const int16_t HUMIDITY_CALIBRATION_ADDR_4 = 0xE4;
 			static constexpr const int16_t HUMIDITY_CALIBRATION_ADDR_5 = 0xE5;
-			static constexpr const int8_t HUMIDITY_CALIBRATION_ADDR_6 = 0xE7;
+			static constexpr const int8_t HUMIDITY_CALIBRATION_ADDR_6 = (int8_t)0xE7;
 
 			// General addresses
 			static constexpr const uint8_t FILE_BEGIN = 0X88;
@@ -74,7 +74,7 @@ namespace driver
 			static constexpr const uint8_t STANDBY_POS = 0x05;
 
 			// Lengths
-			static constexpr const uint8_t COMPLETE_FILE_LENGTH = 108;
+			static constexpr const uint8_t COMPLETE_FILE_LENGTH = 118;
 			static constexpr const uint8_t ALL_DATA_LENGTH = 8;
 			static constexpr const uint8_t TEMPERATURE_PRESSURE_CALIB_DATA_LENGTH = 26;
 			static constexpr const uint8_t HUMIDITY_CALIB_DATA_LENGTH = 7;

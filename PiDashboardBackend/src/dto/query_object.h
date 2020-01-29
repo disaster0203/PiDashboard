@@ -20,12 +20,12 @@ namespace dto
 	class query_object
 	{
 	public:
-		query_object(std::string table, std::string create, std::vector<column*> columns) : m_table(table), m_create(create), m_columns(columns) { }
+		query_object(std::string table, std::vector<column*> columns, std::string create) : m_table(table), m_columns(columns), m_create(create) { }
 
 		const char* get_create_statement() const { return m_create.c_str(); }
 		const char* get_table_name() const { return m_table.c_str(); }
 		const std::vector<column*> get_columns() { return m_columns; }
-		const column* get_column(int index)
+		const column* get_column(uint32_t index)
 		{
 			if (index >= 0 && index < m_columns.size())
 			{

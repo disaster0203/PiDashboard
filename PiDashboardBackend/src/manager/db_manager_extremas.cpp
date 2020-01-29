@@ -1,6 +1,6 @@
 #include "db_manager.h"
 
-void db_manager::add_extremum(dto::extremas_dto* new_value)
+int8_t manager::db_manager::add_extremum(std::shared_ptr<dto::extremas_dto> new_value)
 {
 	std::string insert = "INSERT INTO " + std::string(tables["extremas"]->get_table_name()) + "(sensor_type_name, individual_name, count, sum, max, min)"
 		+ " values('" + new_value->get_sensor_type_name() + "', "
@@ -13,10 +13,12 @@ void db_manager::add_extremum(dto::extremas_dto* new_value)
 	if (mysql_query(db_connection, insert.c_str()) != 0)
 	{
 		handle_error("add_extremum", tables["extremas"]->get_table_name(), insert.c_str(), mysql_error(db_connection));
+		return QUERY_ERROR;
 	}
+	return TRUE;
 }
 
-void db_manager::delete_extremum(std::string sensor_type_name, std::string individual_name)
+int8_t manager::db_manager::delete_extremum(std::string sensor_type_name, std::string individual_name)
 {
 	std::string statement = "DELETE FROM " + std::string(tables["extremas"]->get_table_name()) +
 		" WHERE sensor_type_name='" + sensor_type_name + "' AND individual_name='" + individual_name + "';";
@@ -24,10 +26,12 @@ void db_manager::delete_extremum(std::string sensor_type_name, std::string indiv
 	if (mysql_query(db_connection, statement.c_str()) != 0)
 	{
 		handle_error("delete_extremum [by type and name]", tables["extremas"]->get_table_name(), statement.c_str(), mysql_error(db_connection));
+		return QUERY_ERROR;
 	}
+	return TRUE;
 }
 
-dto::extremas_dto* db_manager::get_extremum(std::string sensor_type_name, std::string individual_name)
+int8_t manager::db_manager::get_extremum(std::shared_ptr<dto::extremas_dto>& result, std::string sensor_type_name, std::string individual_name)
 {
 	std::string select = "SELECT * FROM " + std::string(tables["extremas"]->get_table_name()) +
 		" WHERE sensor_name='" + sensor_type_name + "' AND individual_name='" + individual_name + "' LIMIT 1;";
@@ -35,29 +39,35 @@ dto::extremas_dto* db_manager::get_extremum(std::string sensor_type_name, std::s
 	if (mysql_query(db_connection, select.c_str()) != 0)
 	{
 		handle_error("get_extremum", tables["extremas"]->get_table_name(), select.c_str(), mysql_error(db_connection));
+		return QUERY_ERROR;
 	}
 
-	MYSQL_RES* result = mysql_use_result(db_connection);
-	MYSQL_ROW row = mysql_fetch_row(result);
-	dto::extremas_dto* entry = new dto::extremas_dto();
+	MYSQL_RES* res = mysql_use_result(db_connection);
+	MYSQL_ROW row = mysql_fetch_row(res);
+	result = std::make_shared<dto::extremas_dto>();
 
 	if (row != NULL)
 	{
-		entry->set_sensor_type_name(row[1]);
-		entry->set_individual_name(row[2]);
-		entry->set_count(atof(row[3]));
-		entry->set_sum(atof(row[4]));
-		entry->set_max(atof(row[5]));
-		entry->set_min(atof(row[6]));
+		result->set_sensor_type_name(row[1]);
+		result->set_individual_name(row[2]);
+		result->set_count(atof(row[3]));
+		result->set_sum(atof(row[4]));
+		result->set_max(atof(row[5]));
+		result->set_min(atof(row[6]));
 	}
 
-	mysql_free_result(result);
-	return entry;
+	mysql_free_result(res);
+	return TRUE;
 }
 
-void db_manager::update_extremum(dto::sensor_dto* new_value)
+int8_t manager::db_manager::update_extremum(std::shared_ptr<dto::sensor_dto> new_value)
 {
-	auto extremum = get_extremum(new_value->get_sensor_type_name(), new_value->get_individual_name());
+	std::shared_ptr<dto::extremas_dto> extremum = std::make_shared<dto::extremas_dto>();
+	if (get_extremum(extremum, new_value->get_sensor_type_name(), new_value->get_individual_name()) != TRUE)
+	{
+		handle_error("update_extremum", tables["extremas"]->get_table_name(), "Get extremum", mysql_error(db_connection));
+		return QUERY_ERROR;
+	}
 
 	if (extremum->get_count() > 0) // Row already exists -> update it
 	{
@@ -72,17 +82,34 @@ void db_manager::update_extremum(dto::sensor_dto* new_value)
 		if (mysql_query(db_connection, update.c_str()) != 0)
 		{
 			handle_error("update_extremum", tables["extremas"]->get_table_name(), update.c_str(), mysql_error(db_connection));
+			return QUERY_ERROR;
 		}
 	}
 	else // Row does not exist -> add new one
 	{
-		add_extremum(new dto::extremas_dto(new_value->get_sensor_type_name(), new_value->get_individual_name(), 1, new_value->get_value(), new_value->get_value(), new_value->get_value()));
+		auto new_entry = std::make_shared<dto::extremas_dto>(dto::extremas_dto(new_value->get_sensor_type_name(),
+			new_value->get_individual_name(),
+			1,
+			new_value->get_value(),
+			new_value->get_value(),
+			new_value->get_value()));
+		if (add_extremum(new_entry) != TRUE)
+		{
+			handle_error("update_extremum", tables["extremas"]->get_table_name(), "Add new entry", mysql_error(db_connection));
+			return QUERY_ERROR;
+		}
 	}
+	return TRUE;
 }
 
-void db_manager::update_extremum(std::string sensor_type_name, std::string individual_name, double count, double sum, double max, double min)
+int8_t manager::db_manager::update_extremum(std::string sensor_type_name, std::string individual_name, double count, double sum, double max, double min)
 {
-	auto extremum = get_extremum(sensor_type_name, individual_name);
+	std::shared_ptr<dto::extremas_dto> extremum = std::make_shared<dto::extremas_dto>();
+	if (get_extremum(extremum, sensor_type_name, individual_name) != TRUE)
+	{
+		handle_error("update_extremum", tables["extremas"]->get_table_name(), "Get extremum", mysql_error(db_connection));
+		return QUERY_ERROR;
+	}
 
 	if (extremum->get_count() > 0) // Row already exists -> update it
 	{
@@ -97,22 +124,33 @@ void db_manager::update_extremum(std::string sensor_type_name, std::string indiv
 		if (mysql_query(db_connection, update.c_str()) != 0)
 		{
 			handle_error("update_extremum", tables["extremas"]->get_table_name(), update.c_str(), mysql_error(db_connection));
+			return QUERY_ERROR;
 		}
 	}
 	else // Row does not exist -> add new one
 	{
-		add_extremum(new dto::extremas_dto(sensor_type_name, individual_name, count, sum, max, min));
+		if (add_extremum(std::make_shared<dto::extremas_dto>(dto::extremas_dto(sensor_type_name, individual_name, count, sum, max, min))) != TRUE)
+		{
+			handle_error("update_extremum", tables["extremas"]->get_table_name(), "Add new entry", mysql_error(db_connection));
+			return QUERY_ERROR;
+		}
 	}
+	return TRUE;
 }
 
-void db_manager::recalculate_extremum(std::string sensor_type_name, std::string individual_name)
+int8_t manager::db_manager::recalculate_extremum(std::string sensor_type_name, std::string individual_name)
 {
-	auto entries = get_all_sensor_entries(sensor_type_name, individual_name);
+	std::vector<std::shared_ptr<dto::sensor_dto>> entries;
+	if (get_all_sensor_entries(entries, sensor_type_name, individual_name) != TRUE)
+	{
+		handle_error("recalculate_extremum", tables["extremas"]->get_table_name(), "Get all sensor entries", mysql_error(db_connection));
+		return QUERY_ERROR;
+	}
 
 	if (entries.size() == 0)
 	{
-		std::printf("No entries with sensor_type_name %s and individual_name %s found. Cannot recalculate extremas...\n", sensor_type_name, individual_name);
-		return;
+		std::cout << "No entries with sensor_type_name " << sensor_type_name << "and individual_name " << individual_name << " found. Cannot recalculate extremas..." << std::endl;
+		return FALSE;
 	}
 
 	double sum = 0;
@@ -125,6 +163,6 @@ void db_manager::recalculate_extremum(std::string sensor_type_name, std::string 
 		min = (entry->get_value() < min) ? entry->get_value() : min;
 	}
 
-	update_extremum(sensor_type_name, individual_name, entries.size(), sum, max, min);
+	return update_extremum(sensor_type_name, individual_name, entries.size(), sum, max, min);
 }
 

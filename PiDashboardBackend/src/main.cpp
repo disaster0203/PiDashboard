@@ -34,7 +34,7 @@ void print_menu()
 	std::cout << "16: Get Humidity\n";
 }
 
-void print(dto::sensor_dto* entry)
+void print(std::shared_ptr<dto::sensor_dto> entry)
 {
 	std::cout << entry->get_sensor_type_name() << ", "
 		<< entry->get_individual_name() << ", "
@@ -49,8 +49,8 @@ int main()
 
 	srand((int)time(0));
 
-	db_manager* mng = new db_manager("localhost", "test", "password123", "pi_sensor_db");
-	driver::sensors::bme280::barometer* bme280 = new driver::sensors::bme280::barometer();
+	auto mng = std::make_shared<manager::db_manager>(manager::db_manager("localhost", "test", "password123", "pi_sensor_db"));
+	auto bme280 = std::make_shared<driver::sensors::bme280::barometer>();
 	bme280->init();
 	bme280->set_settings(driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_2X,
 		driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_16X,
@@ -67,48 +67,78 @@ int main()
 		switch (choose)
 		{
 		case 0:
-			mng->add_sensor_entry(new dto::sensor_dto("barometer_gy_bme280_temperature", "Wohnzimmer", std::chrono::system_clock::now(), rand()));
-			mng->add_sensor_entry(new dto::sensor_dto("barometer_gy_bme280_air_humidity", "Wohnzimmer", std::chrono::system_clock::now(), rand()));
-			mng->add_sensor_entry(new dto::sensor_dto("barometer_gy_bme280_air_pressure", "Wohnzimmer", std::chrono::system_clock::now(), rand()));
+			mng->add_sensor_entry(std::make_shared<dto::sensor_dto>(dto::sensor_dto("barometer_gy_bme280_temperature", "Wohnzimmer", std::chrono::system_clock::now(), rand())));
+			mng->add_sensor_entry(std::make_shared<dto::sensor_dto>(dto::sensor_dto("barometer_gy_bme280_air_humidity", "Wohnzimmer", std::chrono::system_clock::now(), rand())));
+			mng->add_sensor_entry(std::make_shared<dto::sensor_dto>(dto::sensor_dto("barometer_gy_bme280_air_pressure", "Wohnzimmer", std::chrono::system_clock::now(), rand())));
 			break;
 		case 1:
 		{
-			for (auto entry : mng->get_all_sensor_entries())
-				print(entry);
+			std::vector<std::shared_ptr<dto::sensor_dto>> entries;
+			if (mng->get_all_sensor_entries(entries) == 1)
+			{
+				for (auto entry : entries)
+					print(entry);
+			}
 		}
 		break;
 		case 2:
-			print(mng->get_first_sensor_entry());
-			break;
+		{
+			auto entry = std::make_shared<dto::sensor_dto>();
+			if (mng->get_first_sensor_entry(entry) == 1)
+			{
+				print(entry);
+			}
+		}
+		break;
 		case 3:
-			print(mng->get_last_sensor_entry());
-			break;
+		{
+			auto entry = std::make_shared<dto::sensor_dto>();
+			if (mng->get_last_sensor_entry(entry) == 1)
+			{
+				print(entry);
+			}
+		}
+		break;
 		case 4:
-			print(mng->get_sensor_entry("barometer_gy_bme280_temperature", "Wohnzimmer", utils::time_converter::string_to_timepoint("2020-01-15 19:14:00")));
-			break;
+		{
+			auto entry = std::make_shared<dto::sensor_dto>();
+			if (mng->get_sensor_entry(entry, "barometer_gy_bme280_temperature", "Wohnzimmer", utils::time_converter::string_to_timepoint("2020-01-15 19:14:00")) == 1)
+			{
+				print(entry);
+			}
+		}
+		break;
 		case 5:
-			mng->delete_sensor_entry("barometer_gy_bme280", "Wohnzimmer", utils::time_converter::string_to_timepoint("2020-01-15 19:14:00"));
-			std::cout << "Deleted row with timestamp: " << "2020-01-15 19:14:00";
+			if (mng->delete_sensor_entry("barometer_gy_bme280", "Wohnzimmer", utils::time_converter::string_to_timepoint("2020-01-15 19:14:00")) == 1)
+			{
+				std::cout << "Deleted row with timestamp: " << "2020-01-15 19:14:00";
+			}
 			break;
 		case 6:
 			std::cout << "Enter timestamp (yyyy-mm-dd HH:MM:SS)";
 			std::cin >> timestamp;
-			mng->delete_sensor_entries("barometer_gy_bme280", "Wohnzimmer", utils::time_converter::string_to_timepoint(timestamp), true);
-			std::cout << "Deleted rows older then " << timestamp;
+			if (mng->delete_sensor_entries("barometer_gy_bme280", "Wohnzimmer", utils::time_converter::string_to_timepoint(timestamp), true) == 1)
+			{
+				std::cout << "Deleted row with timestamp: " << "2020-01-15 19:14:00";
+			}
 			break;
 		case 7:
-			std::cout << "Table 'barometer_gy_bme280' " << (mng->check_if_table_exists("pi_sensor_db", "barometer_gy_bme280") ? "exists" : "does not exist");
+			std::cout << "Table 'barometer_gy_bme280' " << ((mng->check_if_table_exists("pi_sensor_db", "barometer_gy_bme280") == 1) ? "exists" : "does not exist");
 			break;
 		case 8:
-			std::cout << "Database 'pi_sensor_db' " << (mng->check_if_database_exists("pi_sensor_db") ? "exists" : "does not exist");
+			std::cout << "Database 'pi_sensor_db' " << ((mng->check_if_database_exists("pi_sensor_db") == 1) ? "exists" : "does not exist");
 			break;
 		case 9:
-			mng->delete_table("barometer_gy_bme280");
-			std::cout << "Deleted table 'barometer_gy_bme280'";
+			if (mng->delete_table("barometer_gy_bme280") == 1)
+			{
+				std::cout << "Deleted table 'barometer_gy_bme280'";
+			}
 			break;
 		case 10:
-			mng->delete_database("pi_sensor_db");
-			std::cout << "Deleted database 'pi_sensor_db'";
+			if (mng->delete_database("pi_sensor_db") == 1)
+			{
+				std::cout << "Deleted database 'pi_sensor_db'";
+			}
 			break;
 		case 11:
 			mng->create_table("CREATE TABLE IF NOT EXISTS barometer_gy_bme280(id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, sensor_name TEXT NOT NULL, timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, temperature DOUBLE, air_humidity DOUBLE, air_pressure DOUBLE);");
