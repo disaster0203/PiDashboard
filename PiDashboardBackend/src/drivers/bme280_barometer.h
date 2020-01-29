@@ -7,6 +7,9 @@
 #include <stdexcept>
 #include <cerrno>
 #include <cstring>
+#include <functional>
+#include <memory>
+#include <utility>
 
 namespace driver
 {
@@ -40,7 +43,18 @@ namespace driver
 				* \param[in] device_address: The address of the device to open.
 				* \returns 0 if initializing the device was successful, a negative error value otherwise.
 				*/
-				int8_t init(uint8_t device_address = SENSOR_PRIMARY_I2C_ADDR);
+				int8_t init(uint8_t device_address = SENSOR_PRIMARY_I2C_ADDR,
+					std::function<int8_t(int, uint8_t, std::unique_ptr<uint8_t[]>&, uint16_t)> read_function = manager::i2c_manager::read_from_device,
+					std::function<int8_t(int, uint8_t, const std::unique_ptr<uint8_t[]>&, uint16_t)> write_function = manager::i2c_manager::write_to_device,
+					std::function<int8_t(const std::string, uint8_t, int&)> open_device_function = manager::i2c_manager::open_device,
+					std::function<int8_t(int&)> close_device_function = manager::i2c_manager::close_device);
+
+				//! Closes a device connection and performs some cleanup.
+				/*!
+				*  Closes a device connection and performs some cleanup.
+				* \returns 0 if closing the device was successful, a negative error value otherwise.
+				*/
+				int8_t close();
 
 				//! Writes temperature and pressure oversampling settings to the device.
 				/*!
@@ -50,7 +64,7 @@ namespace driver
 				* \param[in] settings: A settings object containing the new oversampling settings.
 				* \returns 0 if writing oversampling settings was successful, a negative error value otherwise.
 				*/
-				int8_t set_pressure_and_temperature_oversampling(uint8_t desired_settings, struct settings_data* settings);
+				int8_t set_pressure_and_temperature_oversampling(uint8_t desired_settings, struct settings_data settings);
 
 				//! Writes humidity oversampling settings to the device.
 				/*!
@@ -58,7 +72,7 @@ namespace driver
 				* \param[in] settings: A settings object containing the new oversampling settings.
 				* \returns 0 if writing oversampling settings was successful, a negative error value otherwise.
 				*/
-				int8_t set_humidity_oversampling(struct settings_data* settings);
+				int8_t set_humidity_oversampling(struct settings_data settings);
 
 				//! Writes filter and standby settings to the device.
 				/*!
@@ -67,7 +81,7 @@ namespace driver
 				* \param[in] settings: A settings object containing the new settings.
 				* \returns 0 if writing settings was successful, a negative error value otherwise.
 				*/
-				int8_t set_filter_and_standby_settings(uint8_t desired_settings, struct settings_data* settings);
+				int8_t set_filter_and_standby_settings(uint8_t desired_settings, struct settings_data settings);
 
 				//! Changes the current sensor mode.
 				/*!
@@ -107,7 +121,7 @@ namespace driver
 				* \param[out] settings: A settings object into which the current settings are written.
 				* \returns 0 if reading the settings was successful, a negative error value otherwise.
 				*/
-				int8_t get_settings(struct settings_data* settings);
+				int8_t get_settings(std::unique_ptr<struct settings_data>& settings);
 
 				//! Performs a soft reset on the device.
 				/*!
@@ -119,7 +133,7 @@ namespace driver
 				//! Measures and returns the current temperature.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] temperature: The measured temperature.
 				* \returns 0 if measuring the temperature was successful, a negative error value otherwise.
@@ -129,7 +143,7 @@ namespace driver
 				//! Measures and returns the current air pressure.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] pressure: The measured air pressure.
 				* \returns 0 if measuring the air pressure was successful, a negative error value otherwise.
@@ -139,7 +153,7 @@ namespace driver
 				//! Measures and returns the current air humidity.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] humidity: The measured air humidity.
 				* \returns 0 if measuring the air humidity was successful, a negative error value otherwise.
@@ -149,7 +163,7 @@ namespace driver
 				//! Measures and returns all three sensor values at once.
 				/*!
 				* Sets the device to FORCE mode, waits until the chip has done its calculations and receives the raw data.
-				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding 
+				* Afterwards the data gets transfromed to the final results by compensating it with the corresponding
 				* calibration values.
 				* \param[out] temperature: The measured temperature.
 				* \param[out] pressure: The measured air pressure.
@@ -165,7 +179,7 @@ namespace driver
 				* \param[in] raw_data: A object containing the raw temperature value.
 				* \returns the compensated temperature in degree celsius (range: -40°C - 85°C).
 				*/
-				double get_temperature_data(struct raw_data* raw_data);
+				double get_temperature_data(struct raw_data raw_data);
 
 				//! Compensates raw pressure data to the final air pressure.
 				/*!
@@ -173,7 +187,7 @@ namespace driver
 				* \param[in] raw_data: A object containing the raw pressure value.
 				* \returns the compensated pressure in hPa (range: 300hPA - 1100hPA).
 				*/
-				double get_pressure_data(struct raw_data* raw_data);
+				double get_pressure_data(struct raw_data raw_data);
 
 				//! Compensates raw humidity data to the final air humidity.
 				/*!
@@ -181,7 +195,7 @@ namespace driver
 				* \param[in] raw_data: A object containing the raw humidity value.
 				* \returns the compensated humidity in % (range: 0% - 100%).
 				*/
-				double get_humidity_data(struct raw_data* raw_data);
+				double get_humidity_data(struct raw_data raw_data);
 
 				//! Reads the calibration constants for compensation of the three sensor values from the device.
 				/*!
@@ -198,7 +212,7 @@ namespace driver
 				* \param[out] raw_data: The resulting raw data struct.
 				* \returns 0 if transforming the raw values was successful, a negative error value otherwise.
 				*/
-				int8_t parse_raw_data(uint8_t* read_data, struct raw_data* raw_data);
+				int8_t parse_raw_data(std::unique_ptr<uint8_t[]>& read_data, std::unique_ptr<struct raw_data>& raw_data);
 
 				//! Transforms the sensor settings buffer into a struct.
 				/*!
@@ -207,18 +221,18 @@ namespace driver
 				* \param[out] settings: The resulting settings struct.
 				* \returns 0 if transforming the settings values was successful, a negative error value otherwise.
 				*/
-				void parse_settings(uint8_t* read_data, struct settings_data* settings);
+				void parse_settings(std::unique_ptr<uint8_t[]>& read_data, std::unique_ptr<struct settings_data>& settings);
 
 				//! Calculates the compensated temperature by using temperature calibration constants and a raw value.
 				/*!
 				*  Calculates the compensated temperature by using temperature calibration constants and a raw value.
-				*  The formula used can be found here https://usermanual.wiki/Pdf/BstBme280Ds00110.1570003573 
+				*  The formula used can be found here https://usermanual.wiki/Pdf/BstBme280Ds00110.1570003573
 				*  in chapter 4.2.3 (page 23, [01.27.2020]).
 				* \param[in] calibration: A object containing the temperature calibration constants.
 				* \param[in] raw_temperature: The raw temperature value to compensate.
 				* \returns 0 if compensating the temperature value was successful, a negative error value otherwise.
 				*/
-				double compensate_temperature(struct calibration_data* calibration, int32_t raw_temperature);
+				double compensate_temperature(struct calibration_data calibration, int32_t raw_temperature);
 
 				//! Calculates the compensated air pressure by using pressure calibration constants and a raw value.
 				/*!
@@ -229,7 +243,7 @@ namespace driver
 				* \param[in] raw_pressure: The raw pressure value to compensate.
 				* \returns 0 if compensating the pressure value was successful, a negative error value otherwise.
 				*/
-				double compensate_pressure(struct calibration_data* calibration, int32_t raw_pressure);
+				double compensate_pressure(struct calibration_data calibration, int32_t raw_pressure);
 
 				//! Calculates the compensated air humidity by using humidity calibration constants and a raw value.
 				/*!
@@ -240,12 +254,12 @@ namespace driver
 				* \param[in] raw_humidity: The raw humidity value to compensate.
 				* \returns 0 if compensating the humidity value was successful, a negative error value otherwise.
 				*/
-				double compensate_humidity(struct calibration_data* calibration, int32_t raw_humidity);
+				double compensate_humidity(struct calibration_data calibration, int32_t raw_humidity);
 
 				//! Calculates the time needed for one complete measurement.
 				/*!
 				*  Depending on the filter and oversampling settings a measurement takes some time to finish.
-				*  This time can be calculated with the formula that can be found here 
+				*  This time can be calculated with the formula that can be found here
 				*  https://usermanual.wiki/Pdf/BstBme280Ds00110.1570003573 in appendix B, 9.1 (page 51, [01.27.2020]).
 				* \param[out] time: The calculated time in milliseconds.
 				* \returns 0 if calculating the time was successful, a negative error value otherwise.
@@ -264,7 +278,7 @@ namespace driver
 				* \param[in] settings: The settings to reload.
 				* \returns 0 if reloading the settings was successful, a negative error value otherwise.
 				*/
-				int8_t reload_device_settings(struct settings_data* settings);
+				int8_t reload_device_settings(struct settings_data settings);
 
 				//! Compares old and new settings and decides whether the device settings have to be changed.
 				/*!
@@ -290,10 +304,14 @@ namespace driver
 				* \param[out] all_data: A buffer to store the content.
 				* \returns 0 if reading all data was successful, a negative error value otherwise.
 				*/
-				int8_t get_all_raw_data(uint8_t* all_data);
+				int8_t get_all_raw_data(std::unique_ptr<uint8_t[]>& all_data);
 
 				bme280_device m_device;
 				int m_file_handle;
+				std::function<int8_t(const std::string, uint8_t, int&)> m_open_device_function;
+				std::function<int8_t(int&)> m_close_device_function;
+				std::function<int8_t(int, uint8_t, std::unique_ptr<uint8_t[]>&, uint16_t)> m_read_function;
+				std::function<int8_t(int, uint8_t, const std::unique_ptr<uint8_t[]>&, uint16_t)> m_write_function;
 			};
 		}
 	}

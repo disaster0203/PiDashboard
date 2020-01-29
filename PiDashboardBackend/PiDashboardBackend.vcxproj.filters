@@ -31,7 +31,6 @@
     <ClCompile Include="src\manager\i2c_manager.cpp">
       <Filter>manager</Filter>
     </ClCompile>
-    <ClCompile Include="src\bme280.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\manager\db_manager.h">
@@ -61,7 +60,5 @@
     <ClInclude Include="src\manager\i2c_manager.h">
       <Filter>manager</Filter>
     </ClInclude>
-    <ClInclude Include="src\bme280.h" />
-    <ClInclude Include="src\bme280_defs.h" />
   </ItemGroup>
 </Project>
