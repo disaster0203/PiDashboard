@@ -11,43 +11,43 @@ namespace driver
 			static constexpr const uint8_t CHIP_ID = 0X60;
 			static constexpr const uint8_t STATUS_DURING_UPDATE = 0X01;
 
-			static constexpr const uint8_t SENSOR_PRIMARY_I2C_ADDR = 0x76;
-			static constexpr const uint8_t SENSOR_SECONDARY_I2C_ADDR = 0x77;
+			static constexpr const uint8_t SENSOR_PRIMARY_I2C_REG = 0x76;
+			static constexpr const uint8_t SENSOR_SECONDARY_I2C_REG = 0x77;
 
 			// Temperature addresses
-			static constexpr const uint16_t TEMPERATURE_CALIBRATION_ADDR_1 = 0x88;
-			static constexpr const int16_t TEMPERATURE_CALIBRATION_ADDR_2 = 0x8A;
-			static constexpr const int16_t TEMPERATURE_CALIBRATION_ADDR_3 = 0x8C;
+			static constexpr const uint16_t TEMPERATURE_CALIBRATION_REG_1 = 0x88;
+			static constexpr const int16_t TEMPERATURE_CALIBRATION_REG_2 = 0x8A;
+			static constexpr const int16_t TEMPERATURE_CALIBRATION_REG_3 = 0x8C;
 
 			// Pressure addresses
-			static constexpr const uint16_t PRESSURE_CALIBRATION_ADDR_1 = 0x8E;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_2 = 0x90;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_3 = 0x92;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_4 = 0x94;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_5 = 0x96;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_6 = 0x98;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_7 = 0x9A;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_8 = 0x9C;
-			static constexpr const int16_t PRESSURE_CALIBRATION_ADDR_9 = 0x9E;
+			static constexpr const uint16_t PRESSURE_CALIBRATION_REG_1 = 0x8E;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_2 = 0x90;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_3 = 0x92;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_4 = 0x94;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_5 = 0x96;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_6 = 0x98;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_7 = 0x9A;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_8 = 0x9C;
+			static constexpr const int16_t PRESSURE_CALIBRATION_REG_9 = 0x9E;
 
 			// Humidity addresses
-			static constexpr const uint8_t HUMIDITY_CALIBRATION_ADDR_1 = 0xA1;
-			static constexpr const int16_t HUMIDITY_CALIBRATION_ADDR_2 = 0xE1;
-			static constexpr const uint8_t HUMIDITY_CALIBRATION_ADDR_3 = 0xE3;
-			static constexpr const int16_t HUMIDITY_CALIBRATION_ADDR_4 = 0xE4;
-			static constexpr const int16_t HUMIDITY_CALIBRATION_ADDR_5 = 0xE5;
-			static constexpr const int8_t HUMIDITY_CALIBRATION_ADDR_6 = (int8_t)0xE7;
+			static constexpr const uint8_t HUMIDITY_CALIBRATION_REG_1 = 0xA1;
+			static constexpr const int16_t HUMIDITY_CALIBRATION_REG_2 = 0xE1;
+			static constexpr const uint8_t HUMIDITY_CALIBRATION_REG_3 = 0xE3;
+			static constexpr const int16_t HUMIDITY_CALIBRATION_REG_4 = 0xE4;
+			static constexpr const int16_t HUMIDITY_CALIBRATION_REG_5 = 0xE5;
+			static constexpr const int8_t HUMIDITY_CALIBRATION_REG_6 = (int8_t)0xE7;
 
 			// General addresses
 			static constexpr const uint8_t FILE_BEGIN = 0X88;
-			static constexpr const uint8_t CHIP_ID_ADDR = 0XD0;
-			static constexpr const uint8_t SOFT_RESET_ADDR = 0XE0;
-			static constexpr const uint8_t MEASUREMENT_OVERSAMPLING_ADDR = 0XF4;
-			static constexpr const uint8_t MODE_ADDR = 0XF4;
-			static constexpr const uint8_t HUMIDITY_OVERSAMPLING_ADDR = 0XF2;
-			static constexpr const uint8_t CONFIG_ADDR = 0XF5;
-			static constexpr const uint8_t STATUS_ADDR = 0XF3;
-			static constexpr const uint8_t DATA_ADDR = 0XF7;
+			static constexpr const uint8_t CHIP_ID_REG = 0XD0;
+			static constexpr const uint8_t SOFT_RESET_REG = 0XE0;
+			static constexpr const uint8_t MEASUREMENT_OVERSAMPLING_REG = 0XF4;
+			static constexpr const uint8_t MODE_REG = 0XF4;
+			static constexpr const uint8_t HUMIDITY_OVERSAMPLING_REG = 0XF2;
+			static constexpr const uint8_t CONFIG_REG = 0XF5;
+			static constexpr const uint8_t STATUS_REG = 0XF3;
+			static constexpr const uint8_t DATA_REG = 0XF7;
 
 			// Settings selection
 			static constexpr const uint8_t PRESSURE_SETTING_SELECTION = 1;
@@ -90,13 +90,8 @@ namespace driver
 
 			// Return codes (Warning, Ok, Error)
 			static constexpr const int8_t INVALID_OSR_WARNING = 1;
-			static constexpr const int8_t OK = 0;
-			static constexpr const int8_t NULL_PTR = -1;
-			static constexpr const int8_t DEVICE_NOT_FOUND = -2;
-			static constexpr const int8_t INVALID_LENGTH = -3;
-			static constexpr const int8_t COMMUNICATION_FAIL = -4;
-			static constexpr const int8_t SLEEP_MODE_FAIL = -5;
-			static constexpr const int8_t NVM_COPY_FAILED = -6;
+			static constexpr const int8_t SLEEP_MODE_FAIL = -10;
+			static constexpr const int8_t NVM_COPY_FAILED = -11;
 		}
 	}
 }

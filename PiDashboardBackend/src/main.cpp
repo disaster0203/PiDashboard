@@ -1,5 +1,6 @@
 #include "manager/db_manager.h"
 #include "drivers/bme280_barometer.h"
+#include "drivers/ccs811_co2.h"
 #include "dto/sensor_dto.h"
 #include "utils/time_converter.h"
 
@@ -12,7 +13,7 @@
 
 driver::sensors::bme280::barometer* bme280;
 
-void print_menu()
+void print_database_menu()
 {
 	std::cout << "0: Add entry\n";
 	std::cout << "1: All entries\n";
@@ -28,11 +29,24 @@ void print_menu()
 	std::cout << "11: Create table\n";
 	std::cout << "12: Create database\n";
 	std::cout << "------------------------\n";
-	std::cout << "13: Get All\n";
-	std::cout << "14: Get Temperature\n";
-	std::cout << "15: Get Pressure\n";
-	std::cout << "16: Get Humidity\n";
 }
+
+void print_bme280_menu()
+{
+	std::cout << "1: Get All\n";
+	std::cout << "2: Get Temperature\n";
+	std::cout << "3: Get Pressure\n";
+	std::cout << "4: Get Humidity\n";
+	std::cout << "------------------------\n";
+}
+
+void print_ccs811_menu()
+{
+	std::cout << "1: Get All\n";
+	std::cout << "2: Get Baseline\n";
+	std::cout << "------------------------\n";
+}
+
 
 void print(std::shared_ptr<dto::sensor_dto> entry)
 {
@@ -42,26 +56,21 @@ void print(std::shared_ptr<dto::sensor_dto> entry)
 		<< entry->get_value() << "\n";
 }
 
-int main()
+void on_new_ccs811_data(uint16_t eCO2, uint16_t TVOC)
 {
-	printf("hello from PiSensorBackend!\n");
+	std::cout << "eCO2: " << eCO2 << " ppm  TVOC: " << TVOC << " ppb" << std::endl;
+}
+
+void database_testing()
+{
 	printf("MySQL version: %s\n", mysql_get_client_info());
 
 	srand((int)time(0));
-
 	auto mng = std::make_shared<manager::db_manager>(manager::db_manager("localhost", "test", "password123", "pi_sensor_db"));
-	auto bme280 = std::make_shared<driver::sensors::bme280::barometer>();
-	bme280->init();
-	bme280->set_settings(driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_2X,
-		driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_16X,
-		driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_1X,
-		driver::sensors::bme280::bme280_filter::FILTER_16X,
-		driver::sensors::bme280::bme280_standby_time::STANDBY_250_MS);
-
 	int choose;
 	while (true)
 	{
-		print_menu();
+		print_database_menu();
 		std::string timestamp;
 		std::cin >> choose;
 		switch (choose)
@@ -149,7 +158,28 @@ int main()
 			mng->use_database("pi_sensor_db");
 			std::cout << "Created database 'pi_sensor_db'";
 			break;
-		case 13:
+		}
+	}
+}
+
+void bme280_testing()
+{
+	auto bme280 = std::make_shared<driver::sensors::bme280::barometer>();
+	bme280->init();
+	bme280->set_settings(driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_2X,
+		driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_16X,
+		driver::sensors::bme280::bme280_oversampling::OVERSAMPLING_1X,
+		driver::sensors::bme280::bme280_filter::FILTER_16X,
+		driver::sensors::bme280::bme280_standby_time::STANDBY_250_MS);
+
+	int choose;
+	while (true)
+	{
+		print_bme280_menu();
+		std::cin >> choose;
+		switch (choose)
+		{
+		case 1:
 		{
 			double temp, press, hum;
 
@@ -159,7 +189,7 @@ int main()
 			}
 		}
 		break;
-		case 14:
+		case 2:
 		{
 			double temp;
 			if (bme280->get_temperature_data(temp) == 0)
@@ -168,7 +198,7 @@ int main()
 			}
 		}
 		break;
-		case 15:
+		case 3:
 		{
 			double press;
 			if (bme280->get_pressure_data(press) == 0)
@@ -177,7 +207,7 @@ int main()
 			}
 		}
 		break;
-		case 16:
+		case 4:
 		{
 			double hum;
 			if (bme280->get_humidity_data(hum) == 0)
@@ -188,6 +218,50 @@ int main()
 		break;
 		}
 	}
+}
+
+void ccs811_testing()
+{
+	auto ccs811 = std::make_shared<driver::sensors::ccs811::co2>();
+	ccs811->init(true, 4, 5, on_new_ccs811_data);
+	ccs811->start();
+	ccs811->set_operation_mode(driver::sensors::ccs811::ccs811_operation_mode::PULSE_10_S, false, false);
+	int choose;
+	while (true)
+	{
+		print_ccs811_menu();
+		std::cin >> choose;
+		switch (choose)
+		{
+		case 1:
+		{
+			std::shared_ptr<struct driver::sensors::ccs811::ccs811_result_data> results = std::make_shared<struct driver::sensors::ccs811::ccs811_result_data>();
+			if (ccs811->get_all_result_data(results) == 0)
+			{
+				std::cout << "eCO2: " << results->eco2_value << " ppm  TVOC: " << results->tvoc_value << " ppb" << std::endl;
+			}
+		}
+		break;
+		case 2:
+		{
+			uint8_t results[driver::sensors::ccs811::BASELINE_LEN];
+			if (ccs811->get_current_baseline(results) == 0)
+			{
+				std::cout << "Baseline: " << std::hex << results[0] << std::dec << ", " << std::hex << results[1] << std::dec << std::endl;
+			}
+		}
+		break;
+		}
+	}
+}
+
+int main()
+{
+	printf("hello from PiSensorBackend!\n");
+
+	//database_testing();
+	//bme280_testing();
+	ccs811_testing();
 
 	return 0;
 }
