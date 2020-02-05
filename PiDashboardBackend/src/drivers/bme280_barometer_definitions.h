@@ -47,24 +47,24 @@ namespace driver
 			struct calibration_data
 			{
 				int32_t fine_temperature;
-				uint16_t temperature_calibration_addr_1;
-				int16_t temperature_calibration_addr_2;
-				int16_t temperature_calibration_addr_3;
-				uint16_t pressure_calibration_addr_1;
-				int16_t pressure_calibration_addr_2;
-				int16_t pressure_calibration_addr_3;
-				int16_t pressure_calibration_addr_4;
-				int16_t pressure_calibration_addr_5;
-				int16_t pressure_calibration_addr_6;
-				int16_t pressure_calibration_addr_7;
-				int16_t pressure_calibration_addr_8;
-				int16_t pressure_calibration_addr_9;
-				uint8_t humidity_calibration_addr_1;
-				int16_t humidity_calibration_addr_2;
-				uint8_t humidity_calibration_addr_3;
-				int16_t humidity_calibration_addr_4;
-				int16_t humidity_calibration_addr_5;
-				int8_t humidity_calibration_addr_6;
+				uint16_t temperature_calibration_reg_1;
+				int16_t temperature_calibration_reg_2;
+				int16_t temperature_calibration_reg_3;
+				uint16_t pressure_calibration_reg_1;
+				int16_t pressure_calibration_reg_2;
+				int16_t pressure_calibration_reg_3;
+				int16_t pressure_calibration_reg_4;
+				int16_t pressure_calibration_reg_5;
+				int16_t pressure_calibration_reg_6;
+				int16_t pressure_calibration_reg_7;
+				int16_t pressure_calibration_reg_8;
+				int16_t pressure_calibration_reg_9;
+				uint8_t humidity_calibration_reg_1;
+				int16_t humidity_calibration_reg_2;
+				uint8_t humidity_calibration_reg_3;
+				int16_t humidity_calibration_reg_4;
+				int16_t humidity_calibration_reg_5;
+				int8_t humidity_calibration_reg_6;
 			};
 
 			struct settings_data
@@ -85,8 +85,6 @@ namespace driver
 
 			struct bme280_device
 			{
-				uint8_t chip_id;
-				uint8_t dev_id;
 				struct calibration_data calibration_data;
 				struct settings_data settings;
 				double wait_time;

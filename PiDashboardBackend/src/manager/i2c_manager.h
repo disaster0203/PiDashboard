@@ -62,6 +62,18 @@ namespace manager
 		*/
 		static bool device_open(int handle);
 
+		//! Reads content from the given address to the smart pointer buffer.
+		/*!
+		*  First uses 'write' to set the file pointer to the desired address and afterwards
+		*  reads the desired amount of bytes into the given buffer.
+		* \param[in] handle: The handle that will be used to communicate over the i2c bus.
+		* \param[in] address: The file address to read from.
+		* \param[out] data: The buffer to which the file content will be read.
+		* \param[in] length: The number of bytes to read.
+		* \returns 0 if reading was successful, a negative error value otherwise.
+		*/
+		static int8_t read_from_device_sp(int handle, uint8_t address, std::unique_ptr<uint8_t[]>& data, uint16_t length);
+
 		//! Reads content from the given address to the buffer.
 		/*!
 		*  First uses 'write' to set the file pointer to the desired address and afterwards
@@ -72,7 +84,18 @@ namespace manager
 		* \param[in] length: The number of bytes to read.
 		* \returns 0 if reading was successful, a negative error value otherwise.
 		*/
-		static int8_t read_from_device(int handle, uint8_t address, std::unique_ptr<uint8_t[]>& data, uint16_t length);
+		static int8_t read_from_device(int handle, uint8_t address, uint8_t* data, uint16_t length);
+
+		//! Writes content to the given address from a smart pointer buffer.
+		/*!
+		*  Writes content to the given address from a buffer.
+		* \param[in] handle: The handle that will be used to communicate over the i2c bus.
+		* \param[in] address: The file address to write to.
+		* \param[in] data: The buffer containing the content to write.
+		* \param[in] length: The number of bytes to write.
+		* \returns 0 if writing was successful, a negative error value otherwise.
+		*/
+		static int8_t write_to_device_sp(int handle, uint8_t address, const std::unique_ptr<uint8_t[]>& data, uint16_t length);
 
 		//! Writes content to the given address from a buffer.
 		/*!
@@ -83,8 +106,8 @@ namespace manager
 		* \param[in] length: The number of bytes to write.
 		* \returns 0 if writing was successful, a negative error value otherwise.
 		*/
-		static int8_t write_to_device(int handle, uint8_t address, const std::unique_ptr<uint8_t[]>& data, uint16_t length);
+		static int8_t write_to_device(int handle, uint8_t address, const uint8_t* data, uint16_t length);
 
-		static constexpr const char* DEFAULT_PI_I2C_ADDRESS = "/dev/i2c-1";
+		static constexpr const char* DEFAULT_PI_I2C_PATH = "/dev/i2c-1";
 	};
 }

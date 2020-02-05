@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../manager/i2c_manager.h"
+#include "sensor_base.h"
 #include "bme280_barometer_definitions.h"
 #include "bme280_barometer_constants.h"
 
@@ -21,7 +22,7 @@ namespace driver
 			/*!
 			* This class implements various functions to configure the sensor and receive the measured data.
 			*/
-			class barometer
+			class barometer : sensor_base
 			{
 			public:
 				//! Default constructor.
@@ -40,12 +41,16 @@ namespace driver
 				/*!
 				* Tries to open the device at the given i2c address in O_RDWR and I2C_SLAVE mode.
 				* It also reads and stores the device id and the calibration constants.
-				* \param[in] device_address: The address of the device to open.
+				* \param[in] device_reg: The address of the device to open.
+				* \param[in] read_function: Function pointer to the function that does i2c read operations.
+				* \param[in] write_function: Function pointer to the function that does i2c write operations.
+				* \param[in] open_device_function: Function pointer to the function that opens an i2c connection.
+				* \param[in] close_device_function: Function pointer to the function that closes an i2c connection.
 				* \returns 0 if initializing the device was successful, a negative error value otherwise.
 				*/
-				int8_t init(uint8_t device_address = SENSOR_PRIMARY_I2C_ADDR,
-					std::function<int8_t(int, uint8_t, std::unique_ptr<uint8_t[]>&, uint16_t)> read_function = manager::i2c_manager::read_from_device,
-					std::function<int8_t(int, uint8_t, const std::unique_ptr<uint8_t[]>&, uint16_t)> write_function = manager::i2c_manager::write_to_device,
+				int8_t init(uint8_t device_reg = SENSOR_PRIMARY_I2C_REG,
+					std::function<int8_t(int, uint8_t, uint8_t*, uint16_t)> read_function = manager::i2c_manager::read_from_device,
+					std::function<int8_t(int, uint8_t, const uint8_t*, uint16_t)> write_function = manager::i2c_manager::write_to_device,
 					std::function<int8_t(const std::string, uint8_t, int&)> open_device_function = manager::i2c_manager::open_device,
 					std::function<int8_t(int&)> close_device_function = manager::i2c_manager::close_device);
 
@@ -121,7 +126,7 @@ namespace driver
 				* \param[out] settings: A settings object into which the current settings are written.
 				* \returns 0 if reading the settings was successful, a negative error value otherwise.
 				*/
-				int8_t get_settings(std::unique_ptr<struct settings_data>& settings);
+				int8_t get_settings(std::shared_ptr<struct settings_data>& settings);
 
 				//! Performs a soft reset on the device.
 				/*!
@@ -212,7 +217,7 @@ namespace driver
 				* \param[out] raw_data: The resulting raw data struct.
 				* \returns 0 if transforming the raw values was successful, a negative error value otherwise.
 				*/
-				int8_t parse_raw_data(std::unique_ptr<uint8_t[]>& read_data, std::unique_ptr<struct raw_data>& raw_data);
+				int8_t parse_raw_data(uint8_t* read_data, std::shared_ptr<struct raw_data>& raw_data);
 
 				//! Transforms the sensor settings buffer into a struct.
 				/*!
@@ -221,7 +226,7 @@ namespace driver
 				* \param[out] settings: The resulting settings struct.
 				* \returns 0 if transforming the settings values was successful, a negative error value otherwise.
 				*/
-				void parse_settings(std::unique_ptr<uint8_t[]>& read_data, std::unique_ptr<struct settings_data>& settings);
+				void parse_settings(uint8_t* read_data, std::shared_ptr<struct settings_data>& settings);
 
 				//! Calculates the compensated temperature by using temperature calibration constants and a raw value.
 				/*!
@@ -289,14 +294,6 @@ namespace driver
 				*/
 				bool are_settings_changed(uint8_t old_settings, uint8_t desired_settings);
 
-				//! Checks if the given pointer is null.
-				/*!
-				*  Checks if the given pointer is null.
-				* \param[in] pointer: The pointer to check.
-				* \returns 0 if the pointer is not null and -1 if the pointer is null.
-				*/
-				int8_t null_check(void* pointer);
-
 				//! Simply reads all content from the device at once.
 				/*!
 				*  Simply reads all content from the device at once. The function should only be used for
@@ -304,14 +301,9 @@ namespace driver
 				* \param[out] all_data: A buffer to store the content.
 				* \returns 0 if reading all data was successful, a negative error value otherwise.
 				*/
-				int8_t get_all_raw_data(std::unique_ptr<uint8_t[]>& all_data);
+				int8_t get_all_raw_data(uint8_t* all_data);
 
 				bme280_device m_device;
-				int m_file_handle;
-				std::function<int8_t(const std::string, uint8_t, int&)> m_open_device_function;
-				std::function<int8_t(int&)> m_close_device_function;
-				std::function<int8_t(int, uint8_t, std::unique_ptr<uint8_t[]>&, uint16_t)> m_read_function;
-				std::function<int8_t(int, uint8_t, const std::unique_ptr<uint8_t[]>&, uint16_t)> m_write_function;
 			};
 		}
 	}

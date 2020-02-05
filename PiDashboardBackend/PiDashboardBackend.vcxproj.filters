@@ -31,6 +31,9 @@
     <ClCompile Include="src\manager\i2c_manager.cpp">
       <Filter>manager</Filter>
     </ClCompile>
+    <ClCompile Include="src\drivers\ccs811_co2.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\manager\db_manager.h">
@@ -59,6 +62,18 @@
     </ClInclude>
     <ClInclude Include="src\manager\i2c_manager.h">
       <Filter>manager</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\ccs811_co2.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\ccs811_co2_constants.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\sensor_base.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\ccs811_co2_definitions.h">
+      <Filter>drivers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

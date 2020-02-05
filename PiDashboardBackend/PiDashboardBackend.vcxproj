@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\drivers\bme280_barometer.cpp" />
+    <ClCompile Include="src\drivers\ccs811_co2.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\manager\db_manager_table_management.cpp" />
     <ClCompile Include="src\manager\db_manager_sensors.cpp" />
@@ -46,6 +47,10 @@
     <ClInclude Include="src\drivers\bme280_barometer.h" />
     <ClInclude Include="src\drivers\bme280_barometer_constants.h" />
     <ClInclude Include="src\drivers\bme280_barometer_definitions.h" />
+    <ClInclude Include="src\drivers\ccs811_co2.h" />
+    <ClInclude Include="src\drivers\ccs811_co2_constants.h" />
+    <ClInclude Include="src\drivers\ccs811_co2_definitions.h" />
+    <ClInclude Include="src\drivers\sensor_base.h" />
     <ClInclude Include="src\dto\sensor_dto.h" />
     <ClInclude Include="src\dto\extremas_dto.h" />
     <ClInclude Include="src\dto\query_object.h" />
@@ -104,7 +109,7 @@
       </AdditionalLibraryDirectories>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <LibraryDependencies>mysqlclient</LibraryDependencies>
+      <LibraryDependencies>mysqlclient;wiringPi;pthread</LibraryDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -113,7 +118,7 @@
       </AdditionalLibraryDirectories>
       <AdditionalDependencies>
       </AdditionalDependencies>
-      <LibraryDependencies>mysqlclient</LibraryDependencies>
+      <LibraryDependencies>mysqlclient;wiringPi;pthread</LibraryDependencies>
     </Link>
     <ClCompile>
       <AdditionalIncludeDirectories>/usr/include/mysql/</AdditionalIncludeDirectories>
