@@ -42,6 +42,7 @@
     <ClCompile Include="src\manager\db_manager_sensors.cpp" />
     <ClCompile Include="src\manager\db_manager_extremas.cpp" />
     <ClCompile Include="src\manager\i2c_manager.cpp" />
+    <ClCompile Include="src\utils\iaq_calculator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\drivers\bme280_barometer.h" />
@@ -56,6 +57,7 @@
     <ClInclude Include="src\dto\query_object.h" />
     <ClInclude Include="src\manager\db_manager.h" />
     <ClInclude Include="src\manager\i2c_manager.h" />
+    <ClInclude Include="src\utils\iaq_calculator.h" />
     <ClInclude Include="src\utils\time_converter.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
