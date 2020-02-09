@@ -34,6 +34,9 @@
     <ClCompile Include="src\drivers\ccs811_co2.cpp">
       <Filter>drivers</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\iaq_calculator.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\manager\db_manager.h">
@@ -74,6 +77,9 @@
     </ClInclude>
     <ClInclude Include="src\drivers\ccs811_co2_definitions.h">
       <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\iaq_calculator.h">
+      <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
