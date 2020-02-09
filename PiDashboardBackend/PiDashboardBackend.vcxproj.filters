@@ -37,6 +37,9 @@
     <ClCompile Include="src\utils\iaq_calculator.cpp">
       <Filter>utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\drivers\am312_motion.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\manager\db_manager.h">
@@ -80,6 +83,9 @@
     </ClInclude>
     <ClInclude Include="src\utils\iaq_calculator.h">
       <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\am312_motion.h">
+      <Filter>drivers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

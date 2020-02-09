@@ -2,42 +2,42 @@
 
 void utils::iaq_calculator::add_temperature(double new_temperature)
 {
-	m_iaq_components[iaq_component::TEMPERATURE].points = new_temperature;
+	m_iaq_components[iaq_component::TEMPERATURE].value = new_temperature;
 	rate_temperature(m_iaq_components[iaq_component::TEMPERATURE]);
 	calculate_overall_iaq();
 }
 
 void utils::iaq_calculator::add_co(uint16_t new_co)
 {
-	m_iaq_components[iaq_component::CO].points = new_co;
+	m_iaq_components[iaq_component::CO].value = (double)new_co;
 	rate_co(m_iaq_components[iaq_component::CO]);
 	calculate_overall_iaq();
 }
 
 void utils::iaq_calculator::add_co2(uint16_t new_co2)
 {
-	m_iaq_components[iaq_component::CO2].points = new_co2;
+	m_iaq_components[iaq_component::CO2].value = (double)new_co2;
 	rate_co2(m_iaq_components[iaq_component::CO2]);
 	calculate_overall_iaq();
 }
 
 void utils::iaq_calculator::add_tvoc(uint16_t new_tvco)
 {
-	m_iaq_components[iaq_component::TVOC].points = new_tvco;
+	m_iaq_components[iaq_component::TVOC].value = (double)new_tvco;
 	rate_tvoc(m_iaq_components[iaq_component::TVOC]);
 	calculate_overall_iaq();
 }
 
 void utils::iaq_calculator::add_humidity(double new_humidity)
 {
-	m_iaq_components[iaq_component::HUMIDITY].points = new_humidity;
+	m_iaq_components[iaq_component::HUMIDITY].value = (double)new_humidity;
 	rate_humidity(m_iaq_components[iaq_component::HUMIDITY]);
 	calculate_overall_iaq();
 }
 
 void utils::iaq_calculator::add_no2(double new_no2)
 {
-	m_iaq_components[iaq_component::NO2].points = new_no2;
+	m_iaq_components[iaq_component::NO2].value = new_no2;
 	rate_no2(m_iaq_components[iaq_component::NO2]);
 	calculate_overall_iaq();
 }
@@ -81,7 +81,7 @@ std::tuple<utils::iaq_component, utils::iaq_rating> utils::iaq_calculator::get_b
 
 std::tuple<utils::iaq_component, utils::iaq_rating> utils::iaq_calculator::get_worst_rating()
 {
-	uint8_t min = m_iaq_components.size() * EXCELLENT_POINTS;
+	uint8_t min = static_cast<uint8_t>(m_iaq_components.size() * EXCELLENT_POINTS);
 	iaq_component min_comp;
 	iaq_rating min_rating;
 	for (auto iter = m_iaq_components.begin(); iter != m_iaq_components.end(); ++iter)
@@ -133,7 +133,7 @@ std::tuple<utils::iaq_component, uint8_t> utils::iaq_calculator::get_best_points
 
 std::tuple<utils::iaq_component, uint8_t> utils::iaq_calculator::get_worst_points()
 {
-	uint8_t min = m_iaq_components.size() * EXCELLENT_POINTS;
+	uint8_t min = static_cast<uint8_t>(m_iaq_components.size() * EXCELLENT_POINTS);
 	iaq_component min_comp;
 	for (auto iter = m_iaq_components.begin(); iter != m_iaq_components.end(); ++iter)
 	{
@@ -200,17 +200,17 @@ void utils::iaq_calculator::rate_temperature(component_container& component)
 		component.points = EXCELLENT_POINTS;
 		component.rating = iaq_rating::EXCELLENT;
 	}
-	else if (component.value < 18.0 && component.value >= 17.0 || component.value > 21.0 && component.value <= 22.0)
+	else if ((component.value < 18.0 && component.value >= 17.0) || (component.value > 21.0 && component.value <= 22.0))
 	{
 		component.points = GOOD_POINTS;
 		component.rating = iaq_rating::GOOD;
 	}
-	else if (component.value < 17.0 && component.value >= 16.0 || component.value > 22.0 && component.value <= 23.0)
+	else if ((component.value < 17.0 && component.value >= 16.0) || (component.value > 22.0 && component.value <= 23.0))
 	{
 		component.points = FAIR_POINTS;
 		component.rating = iaq_rating::FAIR;
 	}
-	else if (component.value < 16.0 && component.value >= 15.0 || component.value > 23.0 && component.value <= 24.0)
+	else if ((component.value < 16.0 && component.value >= 15.0) || (component.value > 23.0 && component.value <= 24.0))
 	{
 		component.points = POOR_POINTS;
 		component.rating = iaq_rating::POOR;
@@ -306,17 +306,17 @@ void utils::iaq_calculator::rate_humidity(component_container& component)
 		component.points = EXCELLENT_POINTS;
 		component.rating = iaq_rating::EXCELLENT;
 	}
-	else if (component.value < 40.0 && component.value >= 30.0 || component.value > 60.0 && component.value <= 70.0)
+	else if ((component.value < 40.0 && component.value >= 30.0) || (component.value > 60.0 && component.value <= 70.0))
 	{
 		component.points = GOOD_POINTS;
 		component.rating = iaq_rating::GOOD;
 	}
-	else if (component.value < 30.0 && component.value >= 20.0 || component.value > 70.0 && component.value <= 80.0)
+	else if ((component.value < 30.0 && component.value >= 20.0) || (component.value > 70.0 && component.value <= 80.0))
 	{
 		component.points = FAIR_POINTS;
 		component.rating = iaq_rating::FAIR;
 	}
-	else if (component.value < 20.0 && component.value >= 10.0 || component.value > 80.0 && component.value <= 90.0)
+	else if ((component.value < 20.0 && component.value >= 10.0) || (component.value > 80.0 && component.value <= 90.0))
 	{
 		component.points = POOR_POINTS;
 		component.rating = iaq_rating::POOR;
@@ -353,7 +353,7 @@ void utils::iaq_calculator::calculate_overall_iaq()
 	m_overall_points = 0;
 	for (auto& component : m_iaq_components)
 	{
-		m_overall_points += component.second.points;
+		m_overall_points = (uint8_t)(m_overall_points + component.second.points);
 	}
 
 	// Find out the rating

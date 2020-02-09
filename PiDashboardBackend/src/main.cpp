@@ -1,6 +1,7 @@
 #include "manager/db_manager.h"
 #include "drivers/bme280_barometer.h"
 #include "drivers/ccs811_co2.h"
+#include "drivers/am312_motion.h"
 #include "dto/sensor_dto.h"
 #include "utils/time_converter.h"
 
@@ -59,6 +60,11 @@ void print(std::shared_ptr<dto::sensor_dto> entry)
 void on_new_ccs811_data(uint16_t eCO2, uint16_t TVOC)
 {
 	std::cout << "eCO2: " << eCO2 << " ppm  TVOC: " << TVOC << " ppb" << std::endl;
+}
+
+void on_motion_detected()
+{
+	std::cout << "Motion detected!" << std::endl;
 }
 
 void database_testing()
@@ -255,13 +261,24 @@ void ccs811_testing()
 	}
 }
 
+void am312_testing()
+{
+	auto am312 = std::make_shared<driver::sensors::am312::motion>();
+	am312->init(0, on_motion_detected);
+	while (true)
+	{
+
+	}
+}
+
 int main()
 {
 	printf("hello from PiSensorBackend!\n");
 
 	//database_testing();
 	//bme280_testing();
-	ccs811_testing();
+	//ccs811_testing();
+	am312_testing();
 
 	return 0;
 }
