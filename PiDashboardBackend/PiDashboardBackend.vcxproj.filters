@@ -40,6 +40,7 @@
     <ClCompile Include="src\drivers\am312_motion.cpp">
       <Filter>drivers</Filter>
     </ClCompile>
+    <ClCompile Include="src\drivers\ads1115_converter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\manager\db_manager.h">
@@ -85,6 +86,15 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="src\drivers\am312_motion.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\ads1115_converter.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\ads1115_converter_definitions.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\ads1115_converter_constants.h">
       <Filter>drivers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -446,7 +446,7 @@ int8_t driver::sensors::ccs811::co2::get_eCO2_data(uint16_t& eCO2)
 			return COMMUNICATION_FAIL;
 		}
 
-		eCO2 = (uint16_t)((raw_results[0] << 8) | raw_results[1]);
+		eCO2 = combine_bytes(raw_results[0], raw_results[1]);
 		return OK;
 	}
 
@@ -467,7 +467,7 @@ int8_t driver::sensors::ccs811::co2::get_TVOC_data(uint16_t& TVOC)
 			return COMMUNICATION_FAIL;
 		}
 
-		TVOC = (uint16_t)((raw_results[2] << 8) | raw_results[3]);
+		TVOC = combine_bytes(raw_results[2], raw_results[3]);
 		return OK;
 	}
 
@@ -506,12 +506,12 @@ int8_t driver::sensors::ccs811::co2::get_all_result_data(std::shared_ptr<struct 
 			return COMMUNICATION_FAIL;
 		}
 
-		result->eco2_value = (uint16_t)((raw_results[0] << 8) | raw_results[1]);
-		result->tvoc_value = (uint16_t)((raw_results[2] << 8) | raw_results[3]);
+		result->eco2_value = combine_bytes(raw_results[0], raw_results[1]);
+		result->tvoc_value = combine_bytes(raw_results[2], raw_results[3]);
 		result->status = raw_results[4];
 		result->error_id = raw_results[5];
 		result->raw_data.current = value_of_bits(raw_results[6], 2, 7);
-		result->raw_data.voltage = (uint16_t)(value_of_bits(raw_results[6], 0, 1) << 8 | (raw_results[7]));
+		result->raw_data.voltage = combine_bytes(value_of_bits(raw_results[6], 0, 1), raw_results[7]);
 
 		return OK;
 	}
@@ -573,8 +573,8 @@ int8_t driver::sensors::ccs811::co2::get_NTC_data(std::shared_ptr<struct ccs811_
 			return COMMUNICATION_FAIL;
 		}
 
-		ntc->v_over_resistor = (uint16_t)((ntc_results[0] << 8) | ntc_results[1]);
-		ntc->v_over_ntc = (uint16_t)((ntc_results[2] << 8) | ntc_results[3]);
+		ntc->v_over_resistor = combine_bytes(ntc_results[0], ntc_results[1]);
+		ntc->v_over_ntc = combine_bytes(ntc_results[2], ntc_results[3]);
 
 		return OK;
 	}

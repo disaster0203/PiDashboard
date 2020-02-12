@@ -2,6 +2,7 @@
 #include "drivers/bme280_barometer.h"
 #include "drivers/ccs811_co2.h"
 #include "drivers/am312_motion.h"
+#include "drivers/ads1115_converter.h"
 #include "dto/sensor_dto.h"
 #include "utils/time_converter.h"
 
@@ -48,6 +49,13 @@ void print_ccs811_menu()
 	std::cout << "------------------------\n";
 }
 
+void print_ads1115_menu()
+{
+	std::cout << "1: Data Rate\n";
+	std::cout << "2: Gain Amplifier\n";
+	std::cout << "3: Run\n";
+	std::cout << "------------------------\n";
+}
 
 void print(std::shared_ptr<dto::sensor_dto> entry)
 {
@@ -271,6 +279,89 @@ void am312_testing()
 	}
 }
 
+void ads1115_testing()
+{
+	auto ads1115 = std::make_shared<driver::sensors::ads1115::converter>();
+	ads1115->init();
+
+	driver::sensors::ads1115::ads1115_configuration config;
+	ads1115->restore_default_settings();
+	ads1115->get_settings(config);
+	std::cout << "Multiplexer: " << (int)config.multiplexer << std::endl;
+	std::cout << "Gain Amplifier: " << (int)config.gain_amplifier << std::endl;
+	std::cout << "Operation Mode: " << (int)config.operation_mode << std::endl;
+	std::cout << "Data Rate: " << (int)config.data_rate << std::endl;
+	std::cout << "Comparator Mode: " << (int)config.comparator_mode << std::endl;
+	std::cout << "Comparator Polarity: " << (int)config.alert_polarity << std::endl;
+	std::cout << "Comparator Latching: " << (int)config.alert_latching << std::endl;
+	std::cout << "Comparator Queueing: " << (int)config.alert_queueing << std::endl;
+
+	ads1115->set_multiplexer_setting(driver::sensors::ads1115::ads1115_multiplexer::POSITIVE_0_AND_NEGATIVE_GND);
+	ads1115->set_operation_mode_setting(driver::sensors::ads1115::ads1115_operation_mode::CONTINUOUS);
+
+	int choose;
+	while (true)
+	{
+		print_ads1115_menu();
+		std::cin >> choose;
+
+		switch (choose)
+		{
+		case 1:
+		{
+			int dr;
+			std::cout << "8 SPS: 0" << std::endl;
+			std::cout << "16 SPS: 1" << std::endl;
+			std::cout << "32 SPS: 2" << std::endl;
+			std::cout << "64 SPS: 3" << std::endl;
+			std::cout << "128 SPS: 4" << std::endl;
+			std::cout << "250 SPS: 5" << std::endl;
+			std::cout << "475 SPS: 6" << std::endl;
+			std::cout << "860 SPS: 7" << std::endl;
+			std::cin >> dr;
+
+			ads1115->get_settings(config);
+			std::cout << "Current DR: " << (int)config.data_rate << std::endl;
+
+			ads1115->set_data_rate_setting((driver::sensors::ads1115::ads1115_data_rate)dr);
+			ads1115->get_settings(config);
+			std::cout << "New DR: " << (int)config.data_rate << std::endl;
+		}
+		break;
+		case 2:
+		{
+			int gain;
+			std::cout << "6.144 V: 0" << std::endl;
+			std::cout << "4.096 V: 1" << std::endl;
+			std::cout << "2.048 V: 2" << std::endl;
+			std::cout << "1.024 V: 3" << std::endl;
+			std::cout << "0.512 V: 4" << std::endl;
+			std::cout << "0.256 V: 5" << std::endl;
+			std::cin >> gain;
+
+			ads1115->get_settings(config);
+			std::cout << "Current Gain: " << (int)config.gain_amplifier << std::endl;
+
+			ads1115->set_gain_amplifier_setting((driver::sensors::ads1115::ads1115_gain_amplifier)gain);
+			ads1115->get_settings(config);
+			std::cout << "New Gain: " << (int)config.gain_amplifier << std::endl;
+		}
+		break;
+		case 3:
+		{
+			double raw;
+			while (true)
+			{
+				ads1115->get_converted_data(raw);
+				std::cout << raw << " V" << std::endl;
+				delay(1000);
+			}
+		}
+		break;
+		}
+	}
+}
+
 int main()
 {
 	printf("hello from PiSensorBackend!\n");
@@ -278,7 +369,8 @@ int main()
 	//database_testing();
 	//bme280_testing();
 	//ccs811_testing();
-	am312_testing();
+	//am312_testing();
+	ads1115_testing();
 
 	return 0;
 }

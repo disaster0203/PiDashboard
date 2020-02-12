@@ -36,11 +36,11 @@ namespace driver
 				* \param[in] close_device_function: Function pointer to the function that closes an i2c connection.
 				* \returns 0 if initializing the device was successful, a negative error value otherwise.
 				*/
-				int8_t init(uint8_t device_reg = SENSOR_PRIMARY_I2C_REG,
+				virtual int8_t init(uint8_t device_reg = SENSOR_PRIMARY_I2C_REG,
 					std::function<int8_t(int, uint8_t, uint8_t*, uint16_t)> read_function = manager::i2c_manager::read_from_device,
 					std::function<int8_t(int, uint8_t, const uint8_t*, uint16_t)> write_function = manager::i2c_manager::write_to_device,
 					std::function<int8_t(const std::string, uint8_t, int&)> open_device_function = manager::i2c_manager::open_device,
-					std::function<int8_t(int&)> close_device_function = manager::i2c_manager::close_device);
+					std::function<int8_t(int&)> close_device_function = manager::i2c_manager::close_device) override;
 
 			public:
 				//! Default constructor.
@@ -85,7 +85,7 @@ namespace driver
 				*  Closes a device connection and performs some cleanup.
 				* \returns 0 if closing the device was successful, a negative error value otherwise.
 				*/
-				int8_t close();
+				virtual int8_t close() override;
 
 				//! Activates or deactivates the power safe mode.
 				/*!
