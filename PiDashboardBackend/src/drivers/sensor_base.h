@@ -9,7 +9,7 @@ namespace driver
 {
 	namespace sensors
 	{
-		static constexpr const int8_t WARNING = 0;
+		static constexpr const int8_t WARNING = 1;
 		static constexpr const int8_t OK = 0;
 		static constexpr const int8_t NULL_PTR = -1;
 		static constexpr const int8_t DEVICE_NOT_FOUND = -2;
@@ -115,10 +115,30 @@ namespace driver
 					std::cerr << "SensorBase [set_bits] Error: The given mask has less bits set than the value. This would result in unintentional bit changes." << std::endl;
 					return false;
 				}
+
+				int8_t index = (int8_t)(index_of_highest_active_bit(mask) - index_of_highest_active_bit(value));
+				value = (uint8_t)(value << index);
 				
 				// Turn off currently set bits at mask position and afterwards set the desired bits.
-				byte = (uint8_t)((byte & ~mask) | value); 
+				byte = (uint8_t)((byte & ~mask) | value);
 				return true;
+			}
+
+			//! Returns the index of the highest active bit.
+			/*!
+			*  Returns the index of the highest active bit.
+			* \param[in] byte: The byte value.
+			* \returns The index of the highest active bit.
+			*/
+			int8_t index_of_highest_active_bit(uint8_t byte)
+			{
+				int8_t index = 0;
+				while ((uint8_t)(byte >> index) != 0)
+				{
+					index++;
+				}
+				
+				return (int8_t)(index - 1);
 			}
 
 			//! Counts the bits in a byte that are set to 1.
@@ -172,6 +192,31 @@ namespace driver
 				}
 
 				return (uint8_t)((mask & byte) >> start_bit);
+			}
+
+			//! Combines two 8 bit values to one 16 bit value.
+			/*!
+			*  Combines two 8 bit values to one 16 bit value.
+			* \param[in] high_byte: The first byte value. Represents the high part of the resulting 16 bit value.
+			* \param[in] low_byte: The second byte value. Represents the low part of the resulting 16 bit value.
+			* \returns The value of the combined bytes as 16 bit value.
+			*/
+			uint16_t combine_bytes(uint8_t high_byte, uint8_t low_byte)
+			{
+				return (uint16_t)((high_byte << 8) | low_byte);
+			}
+
+			//! Combines two 8 bit values to one 16 bit value.
+			/*!
+			*  Combines two 8 bit values to one 16 bit value.
+			* \param[in] value: The 16 bit value to split.
+			* \param[out] high_byte: The first byte value. Represents the high part of the resulting 16 bit value.
+			* \param[out] low_byte: The second byte value. Represents the low part of the resulting 16 bit value.
+			*/
+			void split_bytes(uint16_t value, uint8_t& high_byte, uint8_t& low_byte)
+			{
+				high_byte = (uint8_t)(value & 0xFF);
+				low_byte = (uint8_t)(value >> 8);
 			}
 
 			//! Checks if the given pointer is null.

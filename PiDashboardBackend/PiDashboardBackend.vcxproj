@@ -35,6 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\drivers\ads1115_converter.cpp" />
     <ClCompile Include="src\drivers\am312_motion.cpp" />
     <ClCompile Include="src\drivers\bme280_barometer.cpp" />
     <ClCompile Include="src\drivers\ccs811_co2.cpp" />
@@ -46,6 +47,9 @@
     <ClCompile Include="src\utils\iaq_calculator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\drivers\ads1115_converter.h" />
+    <ClInclude Include="src\drivers\ads1115_converter_constants.h" />
+    <ClInclude Include="src\drivers\ads1115_converter_definitions.h" />
     <ClInclude Include="src\drivers\am312_motion.h" />
     <ClInclude Include="src\drivers\bme280_barometer.h" />
     <ClInclude Include="src\drivers\bme280_barometer_constants.h" />
