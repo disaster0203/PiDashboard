@@ -17,6 +17,18 @@ int8_t driver::sensors::ads1115::converter::init(uint8_t device_reg, std::functi
 	return OK;
 }
 
+bool driver::sensors::ads1115::converter::is_initialized()
+{
+	if (m_file_handle == 0)
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
 int8_t driver::sensors::ads1115::converter::close()
 {
 	return m_close_device_function(m_file_handle);
@@ -398,9 +410,45 @@ int8_t driver::sensors::ads1115::converter::get_converted_data(double& converted
 		return COMMUNICATION_FAIL;
 	}
 
-	converted_data = combine_bytes(raw_converted[0], raw_converted[1]);
-	converted_data /= 10000;
+
+	converted_data = convert_to_voltage(combine_bytes(raw_converted[0], raw_converted[1]));
 	return OK;
+}
+
+double driver::sensors::ads1115::converter::convert_to_voltage(uint16_t raw_data)
+{
+	ads1115_gain_amplifier gain;
+	if (get_gain_amplifier_setting(gain) != OK)
+	{
+		std::cerr << "ADS1115 [get_converted_data] Error: Could not read current gain amplifier setting." << std::endl;
+		return COMMUNICATION_FAIL;
+	}
+	double bit_factor;
+	switch (gain)
+	{
+	case driver::sensors::ads1115::ads1115_gain_amplifier::GAIN_6144_mV:
+		bit_factor = 6144.0 / 32767.0;
+		break;
+	case driver::sensors::ads1115::ads1115_gain_amplifier::GAIN_4096_mV:
+		bit_factor = 4096.0 / 32767.0;
+		break;
+	case driver::sensors::ads1115::ads1115_gain_amplifier::GAIN_2048_mV:
+		bit_factor = 2048.0 / 32767.0;
+		break;
+	case driver::sensors::ads1115::ads1115_gain_amplifier::GAIN_1024_mV:
+		bit_factor = 1024.0 / 32767.0;
+		break;
+	case driver::sensors::ads1115::ads1115_gain_amplifier::GAIN_512_mV:
+		bit_factor = 512.0 / 32767.0;
+		break;
+	case driver::sensors::ads1115::ads1115_gain_amplifier::GAIN_256_mV:
+		bit_factor = 256.0 / 32767.0;
+		break;
+	default:
+		bit_factor = 1.0;
+		break;
+	}
+	return (raw_data * bit_factor) / 1000.0;
 }
 
 int8_t driver::sensors::ads1115::converter::get_upper_threshold(uint16_t& upper_threshold)
