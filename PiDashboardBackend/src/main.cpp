@@ -2,6 +2,7 @@
 #include "drivers/bme280_barometer.h"
 #include "drivers/ccs811_co2.h"
 #include "drivers/am312_motion.h"
+#include "drivers/ky018_photo.h"
 #include "drivers/ads1115_converter.h"
 #include "dto/sensor_dto.h"
 #include "utils/time_converter.h"
@@ -54,6 +55,8 @@ void print_ads1115_menu()
 	std::cout << "1: Data Rate\n";
 	std::cout << "2: Gain Amplifier\n";
 	std::cout << "3: Run\n";
+	std::cout << "4: Voltage\n";
+	std::cout << "5: Resistance\n";
 	std::cout << "------------------------\n";
 }
 
@@ -283,9 +286,13 @@ void ads1115_testing()
 {
 	auto ads1115 = std::make_shared<driver::sensors::ads1115::converter>();
 	ads1115->init();
+	ads1115->restore_default_settings();
+	ads1115->set_multiplexer_setting(driver::sensors::ads1115::ads1115_multiplexer::POSITIVE_0_AND_NEGATIVE_GND);
+	ads1115->set_operation_mode_setting(driver::sensors::ads1115::ads1115_operation_mode::CONTINUOUS);
+	auto ky018 = std::make_shared<driver::sensors::ky018::photo>();
+	ky018->init(ads1115, driver::sensors::ads1115::ads1115_multiplexer::POSITIVE_0_AND_NEGATIVE_GND, driver::sensors::ads1115::ads1115_gain_amplifier::GAIN_2048_mV);
 
 	driver::sensors::ads1115::ads1115_configuration config;
-	ads1115->restore_default_settings();
 	ads1115->get_settings(config);
 	std::cout << "Multiplexer: " << (int)config.multiplexer << std::endl;
 	std::cout << "Gain Amplifier: " << (int)config.gain_amplifier << std::endl;
@@ -296,8 +303,6 @@ void ads1115_testing()
 	std::cout << "Comparator Latching: " << (int)config.alert_latching << std::endl;
 	std::cout << "Comparator Queueing: " << (int)config.alert_queueing << std::endl;
 
-	ads1115->set_multiplexer_setting(driver::sensors::ads1115::ads1115_multiplexer::POSITIVE_0_AND_NEGATIVE_GND);
-	ads1115->set_operation_mode_setting(driver::sensors::ads1115::ads1115_operation_mode::CONTINUOUS);
 
 	int choose;
 	while (true)
@@ -358,6 +363,12 @@ void ads1115_testing()
 			}
 		}
 		break;
+		case 4:
+			std::cout << ky018->get_voltage() << " V" << std::endl;
+			break;
+		case 5:
+			std::cout << ky018->get_resistance() << " Ohm" << std::endl;
+			break;
 		}
 	}
 }

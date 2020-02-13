@@ -6,6 +6,7 @@
 #include <wiringPi.h>
 #include <thread>
 #include <vector>
+#include <limits>
 
 #include "sensor_base.h"
 #include "ads1115_converter_constants.h"
@@ -52,6 +53,13 @@ namespace driver
 					std::function<int8_t(int, uint8_t, const uint8_t*, uint16_t)> write_function = nullptr,
 					std::function<int8_t(const std::string, uint8_t, int&)> open_device_function = manager::i2c_manager::open_device,
 					std::function<int8_t(int&)> close_device_function = manager::i2c_manager::close_device) override;
+
+				//! Checks whether the device connection is correctly setup.
+				/*!
+				* Checks whether the device connection is correctly setup.
+				* \returns True if the device is initialized, false otherwise.
+				*/
+				bool is_initialized();
 				
 				//! Closes a device connection and performs some cleanup.
 				/*!
@@ -386,6 +394,14 @@ namespace driver
 				* \returns The parsed comparator queueing value as ads1115_alert_queueing enum.
 				*/
 				ads1115_alert_queueing parse_comparator_queueing_value(uint8_t raw_data);
+
+				//! Converts the bit value read via I2C based on the current gain amplifier to voltage.
+				/*!
+				*  Converts the bit value read via I2C based on the current gain amplifier to voltage.
+				* \param[in] raw_data: The bit data read via I2C.
+				* \returns The raw data converted to voltage.
+				*/
+				double convert_to_voltage(uint16_t raw_data);
 
 				//! Fallback i2c write function that is used if m_write_function is nullptr.
 				/*!

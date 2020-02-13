@@ -41,6 +41,9 @@
       <Filter>drivers</Filter>
     </ClCompile>
     <ClCompile Include="src\drivers\ads1115_converter.cpp" />
+    <ClCompile Include="src\drivers\ky018_photo.cpp">
+      <Filter>drivers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\manager\db_manager.h">
@@ -95,6 +98,9 @@
       <Filter>drivers</Filter>
     </ClInclude>
     <ClInclude Include="src\drivers\ads1115_converter_constants.h">
+      <Filter>drivers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\drivers\ky018_photo.h">
       <Filter>drivers</Filter>
     </ClInclude>
   </ItemGroup>
