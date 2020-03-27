@@ -34,43 +34,24 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\manager\db_manager_table_management.cpp" />
-    <ClCompile Include="src\manager\db_manager_sensors.cpp" />
-    <ClCompile Include="src\manager\db_manager_extremas.cpp" />
-    <ClCompile Include="src\utils\iaq_calculator.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\dto\sensor_dto.h" />
-    <ClInclude Include="src\dto\extremas_dto.h" />
-    <ClInclude Include="src\dto\query_object.h" />
-    <ClInclude Include="src\manager\db_manager.h" />
-    <ClInclude Include="src\utils\iaq_calculator.h" />
-    <ClInclude Include="src\utils\time_converter.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PiHardwareAbstractionLayer\PiHardwareAbstractionLayer.vcxproj">
-      <Project>{194b72f5-9de0-4ce7-8d62-c334ff0c910d}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5d2e2ac7-5e8b-4527-bb9f-087d2fb2a724}</ProjectGuid>
+    <ProjectGuid>{194b72f5-9de0-4ce7-8d62-c334ff0c910d}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>PiSensorBackend</RootNamespace>
+    <RootNamespace>PiHardwareAbstractionLayer</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
     <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
-    <LinuxProjectType>{D51BCBC9-82E9-4017-911E-C93873C4EA2B}</LinuxProjectType>
-    <ProjectName>PiDashboardBackend</ProjectName>
+    <LinuxProjectType>{2238F9CD-F817-4ECC-BD14-2524D2669B35}</LinuxProjectType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -95,29 +76,51 @@
   <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
+  <ItemGroup>
+    <ClInclude Include="enums\CommunicationType.h" />
+    <ClInclude Include="enums\Delay.h" />
+    <ClInclude Include="enums\SensorName.h" />
+    <ClInclude Include="enums\SensorSetting.h" />
+    <ClInclude Include="enums\SensorType.h" />
+    <ClInclude Include="exceptions\GPIOException.h" />
+    <ClInclude Include="exceptions\HALException.h" />
+    <ClInclude Include="exceptions\I2CException.h" />
+    <ClInclude Include="interfaces\ISensor.h" />
+    <ClInclude Include="Sensor.h" />
+    <ClInclude Include="SensorManager.h" />
+    <ClInclude Include="sensors\analog\KY018.h" />
+    <ClInclude Include="sensors\digital\AM312.h" />
+    <ClInclude Include="sensors\i2c\ADS1115.h" />
+    <ClInclude Include="sensors\i2c\ADS1115Constants.h" />
+    <ClInclude Include="sensors\i2c\ADS1115Definitions.h" />
+    <ClInclude Include="sensors\i2c\BME280.h" />
+    <ClInclude Include="sensors\i2c\BME280Constants.h" />
+    <ClInclude Include="sensors\i2c\BME280Definitions.h" />
+    <ClInclude Include="sensors\i2c\CCS811.h" />
+    <ClInclude Include="sensors\i2c\CCS811Constants.h" />
+    <ClInclude Include="sensors\i2c\CCS811Definitions.h" />
+    <ClInclude Include="structs\CallbackHandle.h" />
+    <ClInclude Include="utils\BitManipulation.h" />
+    <ClInclude Include="utils\Constants.h" />
+    <ClInclude Include="utils\EnumConverter.h" />
+    <ClInclude Include="utils\Helper.h" />
+    <ClInclude Include="utils\I2CManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sensor.cpp" />
+    <ClCompile Include="SensorManager.cpp" />
+    <ClCompile Include="sensors\digital\AM312.cpp" />
+    <ClCompile Include="sensors\i2c\ADS1115.cpp" />
+    <ClCompile Include="sensors\i2c\BME280.cpp" />
+    <ClCompile Include="sensors\i2c\CCS811.cpp" />
+    <ClCompile Include="utils\I2CManager.cpp" />
+  </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <Link>
+      <LibraryDependencies>wiringPi;pthread</LibraryDependencies>
+    </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>../PiHardwareAbstractionLayer/;/usr/include/mysql/</AdditionalIncludeDirectories>
       <CppLanguageStandard>c++17</CppLanguageStandard>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <LibraryDependencies>mysqlclient;wiringPi;pthread</LibraryDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
-    <Link>
-      <AdditionalLibraryDirectories>
-      </AdditionalLibraryDirectories>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-      <LibraryDependencies>mysqlclient;wiringPi;pthread</LibraryDependencies>
-    </Link>
-    <ClCompile>
-      <AdditionalIncludeDirectories>../PiHardwareAbstractionLayer/;/usr/include/mysql/</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
