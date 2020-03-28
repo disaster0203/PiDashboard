@@ -11,12 +11,12 @@ namespace utils
 	class time_converter
 	{
 	public:
-		static inline std::string timepoint_to_string(std::chrono::time_point<std::chrono::system_clock> timepoint)
+		static std::string timepoint_to_string(std::chrono::time_point<std::chrono::system_clock> timepoint)
 		{
 			return timepoint_to_string(timepoint, default_time_format);
 		}
 
-		static inline std::string timepoint_to_string(std::chrono::time_point<std::chrono::system_clock> timepoint, std::string time_format)
+		static std::string timepoint_to_string(std::chrono::time_point<std::chrono::system_clock> timepoint, std::string time_format)
 		{
 			auto time = std::chrono::system_clock::to_time_t(timepoint);
 			std::tm tm = *std::localtime(&time);
@@ -25,12 +25,12 @@ namespace utils
 			return ss.str();
 		}
 
-		static inline std::chrono::time_point<std::chrono::system_clock> string_to_timepoint(std::string timepoint)
+		static std::chrono::time_point<std::chrono::system_clock> string_to_timepoint(std::string timepoint)
 		{
 			return string_to_timepoint(timepoint, default_time_format);
 		}
 
-		static inline std::chrono::time_point<std::chrono::system_clock> string_to_timepoint(std::string timepoint, std::string time_format)
+		static std::chrono::time_point<std::chrono::system_clock> string_to_timepoint(std::string timepoint, std::string time_format)
 		{
 			if (timepoint == "")
 			{
@@ -50,6 +50,6 @@ namespace utils
 			}
 		}
 
-		static constexpr const char* default_time_format = "%Y-%m-%d %T";
+		static constexpr char* default_time_format = "%Y-%m-%d %T";
 	};
 }

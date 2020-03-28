@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PiDashboardBackend", "PiDashboardBackend\PiDashboardBackend.vcxproj", "{5D2E2AC7-5E8B-4527-BB9F-087D2FB2A724}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PiHardwareAbstractionLayer", "PiHardwareAbstractionLayer\PiHardwareAbstractionLayer.vcxproj", "{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -41,6 +43,30 @@ Global
 		{5D2E2AC7-5E8B-4527-BB9F-087D2FB2A724}.Release|x86.ActiveCfg = Release|x86
 		{5D2E2AC7-5E8B-4527-BB9F-087D2FB2A724}.Release|x86.Build.0 = Release|x86
 		{5D2E2AC7-5E8B-4527-BB9F-087D2FB2A724}.Release|x86.Deploy.0 = Release|x86
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|ARM.ActiveCfg = Debug|ARM
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|ARM.Build.0 = Debug|ARM
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|ARM.Deploy.0 = Debug|ARM
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|ARM64.Build.0 = Debug|ARM64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|x64.ActiveCfg = Debug|x64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|x64.Build.0 = Debug|x64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|x64.Deploy.0 = Debug|x64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|x86.ActiveCfg = Debug|x86
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|x86.Build.0 = Debug|x86
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Debug|x86.Deploy.0 = Debug|x86
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|ARM.ActiveCfg = Release|ARM
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|ARM.Build.0 = Release|ARM
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|ARM.Deploy.0 = Release|ARM
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|ARM64.ActiveCfg = Release|ARM64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|ARM64.Build.0 = Release|ARM64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|ARM64.Deploy.0 = Release|ARM64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|x64.ActiveCfg = Release|x64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|x64.Build.0 = Release|x64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|x64.Deploy.0 = Release|x64
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|x86.ActiveCfg = Release|x86
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|x86.Build.0 = Release|x86
+		{194B72F5-9DE0-4CE7-8D62-C334FF0C910D}.Release|x86.Deploy.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

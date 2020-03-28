@@ -10,9 +10,6 @@
     <Filter Include="utils">
       <UniqueIdentifier>{e7e26ae7-fdd2-4c2b-9123-ece6bda8d5b2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="drivers">
-      <UniqueIdentifier>{5a599b23-a88e-4bdf-b7eb-a1f4e52fd087}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\manager\db_manager_extremas.cpp">
@@ -24,25 +21,9 @@
     <ClCompile Include="src\manager\db_manager_sensors.cpp">
       <Filter>manager</Filter>
     </ClCompile>
-    <ClCompile Include="src\drivers\bme280_barometer.cpp">
-      <Filter>drivers</Filter>
-    </ClCompile>
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\manager\i2c_manager.cpp">
-      <Filter>manager</Filter>
-    </ClCompile>
-    <ClCompile Include="src\drivers\ccs811_co2.cpp">
-      <Filter>drivers</Filter>
-    </ClCompile>
     <ClCompile Include="src\utils\iaq_calculator.cpp">
       <Filter>utils</Filter>
-    </ClCompile>
-    <ClCompile Include="src\drivers\am312_motion.cpp">
-      <Filter>drivers</Filter>
-    </ClCompile>
-    <ClCompile Include="src\drivers\ads1115_converter.cpp" />
-    <ClCompile Include="src\drivers\ky018_photo.cpp">
-      <Filter>drivers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,47 +42,8 @@
     <ClInclude Include="src\utils\time_converter.h">
       <Filter>utils</Filter>
     </ClInclude>
-    <ClInclude Include="src\drivers\bme280_barometer.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\bme280_barometer_definitions.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\bme280_barometer_constants.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\manager\i2c_manager.h">
-      <Filter>manager</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\ccs811_co2.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\ccs811_co2_constants.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\sensor_base.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\ccs811_co2_definitions.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
     <ClInclude Include="src\utils\iaq_calculator.h">
       <Filter>utils</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\am312_motion.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\ads1115_converter.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\ads1115_converter_definitions.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\ads1115_converter_constants.h">
-      <Filter>drivers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\drivers\ky018_photo.h">
-      <Filter>drivers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

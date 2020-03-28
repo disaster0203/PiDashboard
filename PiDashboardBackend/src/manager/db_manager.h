@@ -17,10 +17,10 @@
 
 namespace manager
 {
-	static constexpr const int8_t TRUE = 1;
-	static constexpr const int8_t FALSE = 0;
-	static constexpr const int8_t NULL_PTR = -2;
-	static constexpr const int8_t QUERY_ERROR = -1;
+	static constexpr int8_t TRUE = 1;
+	static constexpr int8_t FALSE = 0;
+	static constexpr int8_t NULL_PTR = -2;
+	static constexpr int8_t QUERY_ERROR = -1;
 
 	//! Class that manages all database operations.
 	/*!
@@ -48,7 +48,7 @@ namespace manager
 		* \param password[in]: the password of the user account.
 		* \param database[in]: the name of the database where all tables are located in.
 		*/
-		db_manager(const std::string host, const std::string user, const std::string password, const std::string database);
+		db_manager(std::string host, std::string user, std::string password, std::string database);
 
 		//! Default destructor.
 		~db_manager();
@@ -467,10 +467,10 @@ namespace manager
 		int8_t recalculate_extremum(std::string sensor_type_name, std::string individual_name);
 
 	private:
-		int8_t get_single_sensor_query_result(std::shared_ptr<dto::sensor_dto>& result, const std::string statement);
-		int8_t get_multiple_sensor_query_results(std::vector<std::shared_ptr<dto::sensor_dto>>& result, const std::string statement);
+		int8_t get_single_sensor_query_result(std::shared_ptr<dto::sensor_dto>& result, std::string statement);
+		int8_t get_multiple_sensor_query_results(std::vector<std::shared_ptr<dto::sensor_dto>>& result, std::string statement);
 
-		void handle_error(const std::string method, const std::string table, const std::string statement, const std::string error, bool close = false);
+		void handle_error(std::string method, std::string table, std::string statement, std::string error, bool close = false);
 
 		MYSQL* db_connection;
 

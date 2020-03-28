@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="sensors\i2c\CCS811.cpp">
+      <Filter>sensors\i2c</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\I2CManager.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="sensors\i2c\BME280.cpp">
+      <Filter>sensors\i2c</Filter>
+    </ClCompile>
+    <ClCompile Include="sensors\i2c\ADS1115.cpp">
+      <Filter>sensors\i2c</Filter>
+    </ClCompile>
+    <ClCompile Include="sensors\digital\AM312.cpp">
+      <Filter>sensors\digital</Filter>
+    </ClCompile>
+    <ClCompile Include="Sensor.cpp" />
+    <ClCompile Include="SensorManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sensors\i2c\CCS811.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\CCS811Constants.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\CCS811Definitions.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\I2CManager.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Constants.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\BitManipulation.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\HALException.h">
+      <Filter>exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="enums\CommunicationType.h">
+      <Filter>enums</Filter>
+    </ClInclude>
+    <ClInclude Include="enums\SensorType.h">
+      <Filter>enums</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\GPIOException.h">
+      <Filter>exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\I2CException.h">
+      <Filter>exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="enums\SensorName.h">
+      <Filter>enums</Filter>
+    </ClInclude>
+    <ClInclude Include="enums\SensorSetting.h">
+      <Filter>enums</Filter>
+    </ClInclude>
+    <ClInclude Include="enums\Delay.h">
+      <Filter>enums</Filter>
+    </ClInclude>
+    <ClInclude Include="interfaces\ISensor.h">
+      <Filter>interfaces</Filter>
+    </ClInclude>
+    <ClInclude Include="structs\CallbackHandle.h">
+      <Filter>structs</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Helper.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\BME280Constants.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\BME280.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\BME280Definitions.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\ADS1115.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\ADS1115Constants.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\ADS1115Definitions.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\analog\KY018.h">
+      <Filter>sensors\analog</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\EnumConverter.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\digital\AM312.h">
+      <Filter>sensors\digital</Filter>
+    </ClInclude>
+    <ClInclude Include="Sensor.h" />
+    <ClInclude Include="SensorManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="sensors">
+      <UniqueIdentifier>{e9c6af25-ac02-45c3-ab78-a4092fc5e4a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sensors\i2c">
+      <UniqueIdentifier>{b7e31859-48df-4ad2-a999-0e5614a616f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{68b0b742-d238-40eb-916f-0cb5521eebef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="interfaces">
+      <UniqueIdentifier>{542e315c-19c2-4064-a208-6ca39ac9435a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="exceptions">
+      <UniqueIdentifier>{57752a82-e4d2-4982-8755-c59e716108e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="enums">
+      <UniqueIdentifier>{37301128-8da8-4222-9071-e4acebb69216}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="structs">
+      <UniqueIdentifier>{4099fc04-2938-44fa-a432-f1ce289d9641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sensors\analog">
+      <UniqueIdentifier>{89b1e457-7a71-4306-982b-8a981ebec559}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sensors\digital">
+      <UniqueIdentifier>{d1393416-462d-40eb-8115-d2969ce61cdc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

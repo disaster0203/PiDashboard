@@ -5,11 +5,11 @@
 
 namespace utils
 {
-	static constexpr const uint8_t EXCELLENT_POINTS = 5;
-	static constexpr const uint8_t GOOD_POINTS = 4;
-	static constexpr const uint8_t FAIR_POINTS = 3;
-	static constexpr const uint8_t POOR_POINTS = 2;
-	static constexpr const uint8_t INADEQUATE_POINTS = 1;
+	static constexpr uint8_t EXCELLENT_POINTS = 5;
+	static constexpr uint8_t GOOD_POINTS = 4;
+	static constexpr uint8_t FAIR_POINTS = 3;
+	static constexpr uint8_t POOR_POINTS = 2;
+	static constexpr uint8_t INADEQUATE_POINTS = 1;
 
 	//! Enum defining the various components.
 	/*!
