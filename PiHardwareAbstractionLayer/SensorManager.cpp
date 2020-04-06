@@ -1,6 +1,7 @@
 #include "SensorManager.h"
 #include "exceptions/HALException.h"
 #include "sensors/i2c/BME280.h"
+#include "sensors/i2c/DS3231.h"
 
 hal::SensorManager& hal::SensorManager::instance()
 {
@@ -169,8 +170,10 @@ void hal::SensorManager::create_hardware_pointer(const SensorType type, SensorNa
 	{
 		if (type == SensorType::CLOCK)
 		{
-			//auto sensor = new Sensors::i2c::DS3231::DS3231();
-			//m_hardware_map[std::make_pair(name, pin)] = sensor;
+			auto sensor = new sensors::i2c::ds3231::DS3231();
+			sensor->init();
+			sensor->set_hour_format(sensors::i2c::ds3231::HourFormat::HOUR_FORMAT_24);
+			m_hardware_map[std::make_pair(name, pin)] = sensor;
 		}
 		else
 		{
@@ -180,6 +183,6 @@ void hal::SensorManager::create_hardware_pointer(const SensorType type, SensorNa
 	}
 	break;
 	default:
-		break;
+		throw exception::HALException("SensorManager", "create_hardware_pointer", "Invalid sensor name.");
 	}
 }

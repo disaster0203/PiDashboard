@@ -18,10 +18,10 @@ void hal::sensors::i2c::bme280::BME280::trigger_measurement(const SensorType typ
 			{
 				val = get_temperature_data();
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("BME280", "trigger_measurement",
-														std::string("Could not trigger temperature measurement:\n").append(ex->to_string()));
+														std::string("Could not trigger temperature measurement:\n").append(ex.to_string()));
 			}
 			break;
 		case SensorType::AIR_PRESSURE:
@@ -29,10 +29,10 @@ void hal::sensors::i2c::bme280::BME280::trigger_measurement(const SensorType typ
 			{
 				val = get_pressure_data();
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("BME280", "trigger_measurement",
-														std::string("Could not trigger air pressure measurement:\n").append(ex->to_string()));
+														std::string("Could not trigger air pressure measurement:\n").append(ex.to_string()));
 			}
 			break;
 		case SensorType::AIR_HUMIDITY:
@@ -40,10 +40,10 @@ void hal::sensors::i2c::bme280::BME280::trigger_measurement(const SensorType typ
 			{
 				val = get_humidity_data();
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("BME280", "trigger_measurement",
-														std::string("Could not trigger air humidity measurement:\n").append(ex->to_string()));
+														std::string("Could not trigger air humidity measurement:\n").append(ex.to_string()));
 			}
 			break;
 		default:
@@ -70,10 +70,10 @@ void hal::sensors::i2c::bme280::BME280::configure(const SensorSetting setting, c
 				set_pressure_and_temperature_oversampling(OVERSAMPLING_SETTINGS, os);
 				set_humidity_oversampling(os);
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("BME280", "configure",
-														std::string("Could not change oversampling settings:\n").append(ex->to_string()));
+														std::string("Could not change oversampling settings:\n").append(ex.to_string()));
 			}
 		}
 	}
@@ -85,9 +85,9 @@ void hal::sensors::i2c::bme280::BME280::configure(const SensorSetting setting, c
 		{
 			set_filter_and_standby_settings(FILTER_SETTING_SELECTION, os);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
-			throw exception::HALException("BME280", "configure", std::string("Could not change filter settings:\n").append(ex->to_string()));
+			throw exception::HALException("BME280", "configure", std::string("Could not change filter settings:\n").append(ex.to_string()));
 		}
 	}
 }
@@ -112,10 +112,10 @@ std::string hal::sensors::i2c::bme280::BME280::get_configuration(const SensorSet
 			return std::to_string(settings->filter);
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "get_configuration",
-												std::string("Could not read settings from the device:\n").append(ex->to_string()));
+												std::string("Could not read settings from the device:\n").append(ex.to_string()));
 	}
 
 	return "";
@@ -132,9 +132,9 @@ void hal::sensors::i2c::bme280::BME280::close()
 	{
 		I2CManager::close_device(m_file_handle);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
-		throw exception::HALException("BME280", "close", std::string("Could not close device connection:\n").append(ex->to_string()));
+		throw exception::HALException("BME280", "close", std::string("Could not close device connection:\n").append(ex.to_string()));
 	}
 }
 
@@ -147,9 +147,9 @@ uint8_t hal::sensors::i2c::bme280::BME280::init(const uint8_t device_reg)
 	{
 		I2CManager::open_device(I2CManager::DEFAULT_PI_I2C_PATH, device_reg, m_file_handle);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
-		throw exception::HALException("BME280", "init", std::string("Could not establish connection with device:\n").append(ex->to_string()));
+		throw exception::HALException("BME280", "init", std::string("Could not establish connection with device:\n").append(ex.to_string()));
 	}
 
 	uint8_t try_count = 5;
@@ -188,11 +188,11 @@ void hal::sensors::i2c::bme280::BME280::set_pressure_and_temperature_oversamplin
 	{
 		I2CManager::read_from_device(m_file_handle, reg_REG, reg_data, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "set_pressure_and_temperature_oversampling", m_dev_id, reg_REG,
 												std::string("Could not read pressure and temperature oversampling setting from device:\n").append(
-													ex->to_string()));
+													ex.to_string()));
 	}
 
 	try
@@ -210,10 +210,10 @@ void hal::sensors::i2c::bme280::BME280::set_pressure_and_temperature_oversamplin
 									  TEMPERATURE_MASK);
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "set_pressure_and_temperature_oversampling",
-												std::string("Could not set pressure/temperature bits:\n").append(ex->to_string()));
+												std::string("Could not set pressure/temperature bits:\n").append(ex.to_string()));
 	}
 
 	/* Write the oversampling settings in the register */
@@ -221,11 +221,11 @@ void hal::sensors::i2c::bme280::BME280::set_pressure_and_temperature_oversamplin
 	{
 		I2CManager::write_to_device(m_file_handle, reg_REG, std::move(reg_data), 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "set_pressure_and_temperature_oversampling", m_dev_id, reg_REG,
 												std::string("Could not write pressure and temperature oversampling settings to device:\n").append(
-													ex->to_string()));
+													ex.to_string()));
 	}
 }
 
@@ -240,10 +240,10 @@ void hal::sensors::i2c::bme280::BME280::set_humidity_oversampling(const Settings
 	{
 		I2CManager::write_to_device(m_file_handle, reg_REG, ctrl_hum, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "set_humidity_oversampling", m_dev_id, reg_REG,
-												std::string("Could not write humidity setting to device:\n").append(ex->to_string()));
+												std::string("Could not write humidity setting to device:\n").append(ex.to_string()));
 	}
 
 	reg_REG = MEASUREMENT_OVERSAMPLING_REG;
@@ -252,21 +252,21 @@ void hal::sensors::i2c::bme280::BME280::set_humidity_oversampling(const Settings
 	{
 		I2CManager::read_from_device(m_file_handle, reg_REG, ctrl_meas, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "set_humidity_oversampling", m_dev_id, reg_REG,
-												std::string("Could not read settings from device:\n").append(ex->to_string()));
+												std::string("Could not read settings from device:\n").append(ex.to_string()));
 	}
 
 	try
 	{
 		I2CManager::write_to_device(m_file_handle, reg_REG, ctrl_meas, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "set_humidity_oversampling", m_dev_id, reg_REG,
 												std::string("Could not write settings to device (to force the new oversampling take effect):\n").append(
-													ex->to_string()));
+													ex.to_string()));
 	}
 }
 
@@ -279,10 +279,10 @@ void hal::sensors::i2c::bme280::BME280::set_filter_and_standby_settings(const ui
 	{
 		I2CManager::read_from_device(m_file_handle, reg_REG, reg_data, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "set_filter_and_standby_settings", m_dev_id, reg_REG,
-												std::string("Could not read filter and standby settings from device:\n").append(ex->to_string()));
+												std::string("Could not read filter and standby settings from device:\n").append(ex.to_string()));
 	}
 
 	try
@@ -300,20 +300,20 @@ void hal::sensors::i2c::bme280::BME280::set_filter_and_standby_settings(const ui
 									  STANDBY_MASK);
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "set_filter_and_standby_settings",
-												std::string("Could not set filter/standby bits:\n").append(ex->to_string()));
+												std::string("Could not set filter/standby bits:\n").append(ex.to_string()));
 	}
 
 	try
 	{
 		I2CManager::write_to_device(m_file_handle, reg_REG, reg_data, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "set_filter_and_standby_settings", m_dev_id, reg_REG,
-												std::string("Could not write filter and standby settings to device:\n").append(ex->to_string()));
+												std::string("Could not write filter and standby settings to device:\n").append(ex.to_string()));
 	}
 }
 
@@ -327,10 +327,10 @@ void hal::sensors::i2c::bme280::BME280::set_sensor_mode(OperationMode mode) cons
 		{
 			I2CManager::read_from_device(m_file_handle, MODE_REG, reg_data, 1);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::I2CException("BME280", "set_sensor_mode", m_dev_id, MODE_REG,
-													std::string("Could not read settings from device:\n").append(ex->to_string()));
+													std::string("Could not read settings from device:\n").append(ex.to_string()));
 		}
 
 		BitManipulation::set_bits(reg_data[0], BitManipulation::mask_out(static_cast<uint8_t>(mode), SENSOR_MODE_MASK), SENSOR_MODE_MASK);
@@ -338,10 +338,10 @@ void hal::sensors::i2c::bme280::BME280::set_sensor_mode(OperationMode mode) cons
 		{
 			I2CManager::write_to_device(m_file_handle, MODE_REG, reg_data, 1);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::I2CException("BME280", "set_sensor_mode", m_dev_id, MODE_REG,
-													std::string("Could not write new sensor mode:\n").append(ex->to_string()));
+													std::string("Could not write new sensor mode:\n").append(ex.to_string()));
 		}
 	}
 }
@@ -354,10 +354,10 @@ hal::sensors::i2c::bme280::OperationMode hal::sensors::i2c::bme280::BME280::get_
 	{
 		I2CManager::read_from_device(m_file_handle, MODE_REG, result, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_sensor_mode", m_dev_id, MODE_REG,
-												std::string("Could not read device mode:\n").append(ex->to_string()));
+												std::string("Could not read device mode:\n").append(ex.to_string()));
 	}
 
 	result[0] = BitManipulation::mask_out(result[0], SENSOR_MODE_MASK);
@@ -386,25 +386,25 @@ void hal::sensors::i2c::bme280::BME280::set_settings(
 																																			FILTER_SETTING_SELECTION,
 																																			STANDBY_SETTING_SELECTION))));
 
-	auto sensor_mode = OperationMode::SLEEP;
+	OperationMode sensor_mode;
 	try
 	{
 		sensor_mode = get_sensor_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "set_settings",
-												std::string("Could not read sensor mode:\n").append(ex->to_string()));
+												std::string("Could not read sensor mode:\n").append(ex.to_string()));
 	}
 	std::shared_ptr<SettingsData> settings;
 	try
 	{
 		settings = get_settings();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "set_settings",
-												std::string("Could not read sensor settings:\n").append(ex->to_string()));
+												std::string("Could not read sensor settings:\n").append(ex.to_string()));
 	}
 
 	// Sleep mode and reset
@@ -415,10 +415,10 @@ void hal::sensors::i2c::bme280::BME280::set_settings(
 			soft_reset();
 			reload_device_settings(*settings.get());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("BME280", "set_settings",
-													std::string("Could not perform soft reset on device:\n").append(ex->to_string()));
+													std::string("Could not perform soft reset on device:\n").append(ex.to_string()));
 		}
 	}
 
@@ -444,10 +444,10 @@ void hal::sensors::i2c::bme280::BME280::set_settings(
 			set_filter_and_standby_settings(settings_sel, m_device.settings);
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "set_settings",
-												std::string("Could not apply new settings to the device:\n").append(ex->to_string()));
+												std::string("Could not apply new settings to the device:\n").append(ex.to_string()));
 	}
 }
 
@@ -458,10 +458,10 @@ std::shared_ptr<hal::sensors::i2c::bme280::SettingsData> hal::sensors::i2c::bme2
 	{
 		I2CManager::read_from_device(m_file_handle, HUMIDITY_OVERSAMPLING_REG, reg_data, 4);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_settings", m_dev_id, HUMIDITY_OVERSAMPLING_REG,
-												std::string("Could not read settings data from device:\n").append(ex->to_string()));
+												std::string("Could not read settings data from device:\n").append(ex.to_string()));
 	}
 
 	return parse_settings(reg_data);
@@ -474,10 +474,10 @@ void hal::sensors::i2c::bme280::BME280::soft_reset() const
 	{
 		I2CManager::write_to_device(m_file_handle, SOFT_RESET_REG, data, 1);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "soft_reset", m_dev_id, SOFT_RESET_REG,
-												std::string("Could not write soft reset command to device:\n").append(ex->to_string()));
+												std::string("Could not write soft reset command to device:\n").append(ex.to_string()));
 	}
 
 	uint8_t status_reg[1] = {0};
@@ -489,10 +489,10 @@ void hal::sensors::i2c::bme280::BME280::soft_reset() const
 		{
 			I2CManager::read_from_device(m_file_handle, STATUS_REG, status_reg, 1);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::I2CException("BME280", "soft_reset", m_dev_id, STATUS_REG,
-													std::string("Could not read device status:\n").append(ex->to_string()));
+													std::string("Could not read device status:\n").append(ex.to_string()));
 		}
 	}
 	while (try_run-- && BitManipulation::mask_out(status_reg[0], STATUS_DURING_UPDATE));
@@ -510,10 +510,10 @@ double hal::sensors::i2c::bme280::BME280::get_temperature_data()
 		set_sensor_mode(OperationMode::FORCED);
 		sleep_until_ready();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "get_temperature_data",
-												std::string("Could not set device mode to FORCED:\n").append(ex->to_string()));
+												std::string("Could not set device mode to FORCED:\n").append(ex.to_string()));
 	}
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = {0};
@@ -521,10 +521,10 @@ double hal::sensors::i2c::bme280::BME280::get_temperature_data()
 	{
 		I2CManager::read_from_device(m_file_handle, DATA_REG, reg_data, ALL_DATA_LENGTH);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_temperature_data", m_dev_id, DATA_REG,
-												std::string("Could not read raw data:\n").append(ex->to_string()));
+												std::string("Could not read raw data:\n").append(ex.to_string()));
 	}
 
 	return compensate_temperature(m_device.calibration_data, parse_raw_data(reg_data)->temperature);
@@ -537,10 +537,10 @@ double hal::sensors::i2c::bme280::BME280::get_pressure_data() const
 		set_sensor_mode(OperationMode::FORCED);
 		sleep_until_ready();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "get_pressure_data",
-												std::string("Could not set device mode to FORCED:\n").append(ex->to_string()));
+												std::string("Could not set device mode to FORCED:\n").append(ex.to_string()));
 	}
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = {0};
@@ -548,10 +548,10 @@ double hal::sensors::i2c::bme280::BME280::get_pressure_data() const
 	{
 		I2CManager::read_from_device(m_file_handle, DATA_REG, reg_data, ALL_DATA_LENGTH);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_pressure_data", m_dev_id, DATA_REG,
-												std::string("Could not read raw data:\n").append(ex->to_string()));
+												std::string("Could not read raw data:\n").append(ex.to_string()));
 	}
 
 	return compensate_pressure(m_device.calibration_data, parse_raw_data(reg_data)->pressure);
@@ -564,10 +564,10 @@ double hal::sensors::i2c::bme280::BME280::get_humidity_data() const
 		set_sensor_mode(OperationMode::FORCED);
 		sleep_until_ready();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "get_humidity_data",
-												std::string("Could not set device mode to FORCED:\n").append(ex->to_string()));
+												std::string("Could not set device mode to FORCED:\n").append(ex.to_string()));
 	}
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = {0};
@@ -575,10 +575,10 @@ double hal::sensors::i2c::bme280::BME280::get_humidity_data() const
 	{
 		I2CManager::read_from_device(m_file_handle, DATA_REG, reg_data, ALL_DATA_LENGTH);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_humidity_data", m_dev_id, DATA_REG,
-												std::string("Could not read raw data:\n").append(ex->to_string()));
+												std::string("Could not read raw data:\n").append(ex.to_string()));
 	}
 
 	return compensate_humidity(m_device.calibration_data, parse_raw_data(reg_data)->humidity);
@@ -591,10 +591,10 @@ void hal::sensors::i2c::bme280::BME280::get_all_data(double& temperature, double
 		set_sensor_mode(OperationMode::FORCED);
 		sleep_until_ready();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "get_all_data",
-												std::string("Could not set device mode to FORCED:\n").append(ex->to_string()));
+												std::string("Could not set device mode to FORCED:\n").append(ex.to_string()));
 	}
 
 	uint8_t reg_data[ALL_DATA_LENGTH] = {0};
@@ -602,10 +602,10 @@ void hal::sensors::i2c::bme280::BME280::get_all_data(double& temperature, double
 	{
 		I2CManager::read_from_device(m_file_handle, DATA_REG, reg_data, ALL_DATA_LENGTH);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_all_data", m_dev_id, DATA_REG,
-												std::string("Could not read raw data:\n").append(ex->to_string()));
+												std::string("Could not read raw data:\n").append(ex.to_string()));
 	}
 
 	const auto raw = parse_raw_data(reg_data);
@@ -621,10 +621,10 @@ hal::sensors::i2c::bme280::CalibrationData hal::sensors::i2c::bme280::BME280::ge
 	{
 		I2CManager::read_from_device(m_file_handle, TEMPERATURE_CALIBRATION_REG_1, calibration_data, TEMPERATURE_PRESSURE_CALIB_DATA_LENGTH);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_calibration_data", m_dev_id, DATA_REG,
-												std::string("Could not read temperature and pressure calibration data:\n").append(ex->to_string()));
+												std::string("Could not read temperature and pressure calibration data:\n").append(ex.to_string()));
 	}
 
 	auto calibration = CalibrationData();
@@ -658,10 +658,10 @@ hal::sensors::i2c::bme280::CalibrationData hal::sensors::i2c::bme280::BME280::ge
 	{
 		I2CManager::read_from_device(m_file_handle, HUMIDITY_CALIBRATION_REG_2, calibration_data, HUMIDITY_CALIB_DATA_LENGTH);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_calibration_data", m_dev_id, DATA_REG,
-												std::string("Could not read humidity calibration data:\n").append(ex->to_string()));
+												std::string("Could not read humidity calibration data:\n").append(ex.to_string()));
 	}
 
 	calibration.humidity_calibration_reg_2 = static_cast<int16_t>(BitManipulation::combine_bytes(calibration_data[1], calibration_data[0]));
@@ -710,20 +710,20 @@ std::shared_ptr<hal::sensors::i2c::bme280::SettingsData> hal::sensors::i2c::bme2
 		settings->standby_time = BitManipulation::value_of_bits(read_data[3], STANDBY_POS, 7);
 		return settings;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "parse_settings",
-												std::string("Could not read value of certain bits from byte:\n").append(ex->to_string()));
+												std::string("Could not read value of certain bits from byte:\n").append(ex.to_string()));
 	}
 }
 
 void hal::sensors::i2c::bme280::BME280::get_all_raw_data(uint8_t all_data[COMPLETE_FILE_LENGTH]) const
 {
 	try { I2CManager::read_from_device(m_file_handle, FILE_BEGIN, all_data, COMPLETE_FILE_LENGTH); }
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("BME280", "get_all_RawData", m_dev_id, DATA_REG,
-												std::string("Could not read all file data:\n").append(ex->to_string()));
+												std::string("Could not read all file data:\n").append(ex.to_string()));
 	}
 }
 
@@ -816,10 +816,10 @@ double hal::sensors::i2c::bme280::BME280::calculate_wait_time() const
 		return 1.25 + (2.3 * m_device.settings.temperature_oversampling) + ((2.3 * m_device.settings.pressure_oversampling) + 0.575) + ((2.3 *
 			m_device.settings.humidity_oversampling) + 0.575);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "calculate_wait_time",
-												std::string("Could not read settings from the device:\n").append(ex->to_string()));
+												std::string("Could not read settings from the device:\n").append(ex.to_string()));
 	}
 }
 
@@ -834,20 +834,20 @@ void hal::sensors::i2c::bme280::BME280::reload_device_settings(const SettingsDat
 	{
 		set_humidity_oversampling(settings);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "reload_device_settings",
 												std::string("Could not reset humidity oversampling setting back to default:\n").append(
-													ex->to_string()));
+													ex.to_string()));
 	}
 	try
 	{
 		set_filter_and_standby_settings(ALL_SETTING_SELECTION, settings);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("BME280", "reload_device_settings",
-												std::string("Could not reset filter and standby settings back to default:\n").append(ex->to_string()));
+												std::string("Could not reset filter and standby settings back to default:\n").append(ex.to_string()));
 	}
 }
 

@@ -23,10 +23,10 @@ void hal::sensors::i2c::ads1115::ADS1115::trigger_measurement(const SensorType t
 			{
 				(*i)->callback(std::to_string(get_converted_data()));
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("ADS1115", "trigger_measurement",
-														std::string("Could not trigger conversion:\n").append(ex->to_string()));
+														std::string("Could not trigger conversion:\n").append(ex.to_string()));
 			}
 		}
 		else
@@ -44,10 +44,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 		{
 			set_comparator_latching_setting(EnumConverter::string_to_alert_latching(configuration));
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change comparator latching setting:\n").append(ex->to_string()));
+													std::string("Could not change comparator latching setting:\n").append(ex.to_string()));
 		}
 	}
 	else if (setting == SensorSetting::COMPARATOR_MODE)
@@ -56,10 +56,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 		{
 			set_comparator_mode_setting(EnumConverter::string_to_comparator_mode(configuration));
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change comparator mode setting:\n").append(ex->to_string()));
+													std::string("Could not change comparator mode setting:\n").append(ex.to_string()));
 		}
 	}
 	else if (setting == SensorSetting::COMPARATOR_QUEUE)
@@ -68,10 +68,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 		{
 			set_comparator_queue_setting(EnumConverter::string_to_alert_queueing(configuration));
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change comparator queue setting:\n").append(ex->to_string()));
+													std::string("Could not change comparator queue setting:\n").append(ex.to_string()));
 		}
 	}
 	else if (setting == SensorSetting::PIN_POLARITY)
@@ -80,10 +80,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 		{
 			set_comparator_polarity_setting(EnumConverter::string_to_alert_polarity(configuration));
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change pin polarity setting:\n").append(ex->to_string()));
+													std::string("Could not change pin polarity setting:\n").append(ex.to_string()));
 		}
 	}
 	else if (setting == SensorSetting::DATA_RATE)
@@ -92,10 +92,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 		{
 			set_data_rate_setting(EnumConverter::string_to_data_rate(configuration));
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change data rate setting:\n").append(ex->to_string()));
+													std::string("Could not change data rate setting:\n").append(ex.to_string()));
 		}
 	}
 	else if (setting == SensorSetting::GAIN_AMPLIFIER)
@@ -104,10 +104,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 		{
 			set_gain_amplifier_setting(EnumConverter::string_to_gain_amplifier(configuration));
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change gain amplifier setting:\n").append(ex->to_string()));
+													std::string("Could not change gain amplifier setting:\n").append(ex.to_string()));
 		}
 	}
 	else if (setting == SensorSetting::THRESHOLD)
@@ -124,10 +124,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 				}
 			}
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change threshold settings:\n").append(ex->to_string()));
+													std::string("Could not change threshold settings:\n").append(ex.to_string()));
 		}
 	}
 	else if (setting == SensorSetting::MULTIPLEXER)
@@ -136,10 +136,10 @@ void hal::sensors::i2c::ads1115::ADS1115::configure(const SensorSetting setting,
 		{
 			set_multiplexer_setting(EnumConverter::string_to_multiplexer(configuration));
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "configure",
-													std::string("Could not change multiplexer setting:\n").append(ex->to_string()));
+													std::string("Could not change multiplexer setting:\n").append(ex.to_string()));
 		}
 	}
 }
@@ -152,10 +152,10 @@ std::string hal::sensors::i2c::ads1115::ADS1115::get_configuration(const SensorS
 		{
 			return EnumConverter::enum_to_string(get_comparator_queue_setting());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "get_configuration",
-													std::string("Could not get comparator queue setting:\n").append(ex->to_string()));
+													std::string("Could not get comparator queue setting:\n").append(ex.to_string()));
 		}
 	}
 	if (setting == SensorSetting::COMPARATOR_LATCHING)
@@ -164,10 +164,10 @@ std::string hal::sensors::i2c::ads1115::ADS1115::get_configuration(const SensorS
 		{
 			return EnumConverter::enum_to_string(get_comparator_latching_setting());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "get_configuration",
-													std::string("Could not get comparator latching setting:\n").append(ex->to_string()));
+													std::string("Could not get comparator latching setting:\n").append(ex.to_string()));
 		}
 	}
 	if (setting == SensorSetting::PIN_POLARITY)
@@ -176,10 +176,10 @@ std::string hal::sensors::i2c::ads1115::ADS1115::get_configuration(const SensorS
 		{
 			return EnumConverter::enum_to_string(get_comparator_polarity_setting());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "get_configuration",
-													std::string("Could not get comparator polarity setting:\n").append(ex->to_string()));
+													std::string("Could not get comparator polarity setting:\n").append(ex.to_string()));
 		}
 	}
 	if (setting == SensorSetting::COMPARATOR_MODE)
@@ -188,10 +188,10 @@ std::string hal::sensors::i2c::ads1115::ADS1115::get_configuration(const SensorS
 		{
 			return EnumConverter::enum_to_string(get_comparator_mode_setting());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "get_configuration",
-													std::string("Could not get comparator mode setting:\n").append(ex->to_string()));
+													std::string("Could not get comparator mode setting:\n").append(ex.to_string()));
 		}
 	}
 	if (setting == SensorSetting::DATA_RATE)
@@ -200,10 +200,10 @@ std::string hal::sensors::i2c::ads1115::ADS1115::get_configuration(const SensorS
 		{
 			return EnumConverter::enum_to_string(get_data_rate_setting());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "get_configuration",
-													std::string("Could not get data rate setting:\n").append(ex->to_string()));
+													std::string("Could not get data rate setting:\n").append(ex.to_string()));
 		}
 	}
 	if (setting == SensorSetting::GAIN_AMPLIFIER)
@@ -212,10 +212,10 @@ std::string hal::sensors::i2c::ads1115::ADS1115::get_configuration(const SensorS
 		{
 			return EnumConverter::enum_to_string(get_gain_amplifier_setting());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "get_configuration",
-													std::string("Could not get gain amplifier setting:\n").append(ex->to_string()));
+													std::string("Could not get gain amplifier setting:\n").append(ex.to_string()));
 		}
 	}
 	if (setting == SensorSetting::MULTIPLEXER)
@@ -224,10 +224,10 @@ std::string hal::sensors::i2c::ads1115::ADS1115::get_configuration(const SensorS
 		{
 			return EnumConverter::enum_to_string(get_multiplexer_setting());
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("ADS1115", "get_configuration",
-													std::string("Could not get multiplexer setting:\n").append(ex->to_string()));
+													std::string("Could not get multiplexer setting:\n").append(ex.to_string()));
 		}
 	}
 	return "";
@@ -252,9 +252,9 @@ void hal::sensors::i2c::ads1115::ADS1115::close()
 	{
 		I2CManager::close_device(m_file_handle);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
-		throw exception::HALException("ADS1115", "close", std::string("Could not close device connection:\n").append(ex->to_string()));
+		throw exception::HALException("ADS1115", "close", std::string("Could not close device connection:\n").append(ex.to_string()));
 	}
 }
 
@@ -266,10 +266,10 @@ void hal::sensors::i2c::ads1115::ADS1115::init(const uint8_t device_reg)
 	{
 		I2CManager::open_device(I2CManager::DEFAULT_PI_I2C_PATH, m_dev_id, m_file_handle);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "init",
-												std::string("Could not establish connection with device:\n").append(ex->to_string()));
+												std::string("Could not establish connection with device:\n").append(ex.to_string()));
 	}
 }
 
@@ -326,10 +326,10 @@ bool hal::sensors::i2c::ads1115::ADS1115::is_converting()
 	{
 		return BitManipulation::is_bit_set(current_settings[0], 7);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "is_converting",
-												std::string("Could not check whether a certain bit of a byte is set:\n").append(ex->to_string()));
+												std::string("Could not check whether a certain bit of a byte is set:\n").append(ex.to_string()));
 	}
 }
 
@@ -458,10 +458,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_multiplexer_setting(Multiplexer ne
 	{
 		BitManipulation::set_bits(raw_settings[0], static_cast<uint8_t>(new_multiplexer_setting), MULTIPLEXER_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_multiplexer_setting",
-												std::string("Could not set multiplexer bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set multiplexer bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -484,10 +484,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_gain_amplifier_setting(GainAmplifi
 	{
 		BitManipulation::set_bits(raw_settings[0], static_cast<uint8_t>(new_gain_amplifier_setting), GAIN_AMPLIFIER_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_gain_amplifier_setting",
-												std::string("Could not set gain amplifier bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set gain amplifier bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -510,10 +510,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_operation_mode_setting(OperationMo
 	{
 		BitManipulation::set_bits(raw_settings[0], static_cast<uint8_t>(new_operation_mode_setting), OPERATION_MODE_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_operation_mode_setting",
-												std::string("Could not set operation mode bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set operation mode bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -534,10 +534,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_data_rate_setting(DataRate new_dat
 	{
 		BitManipulation::set_bits(raw_settings[1], static_cast<uint8_t>(new_data_rate_setting), DATA_RATE_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_data_rate_setting",
-												std::string("Could not set data rate bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set data rate bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -559,10 +559,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_comparator_mode_setting(Comparator
 	{
 		BitManipulation::set_bits(raw_settings[1], static_cast<uint8_t>(new_comparator_mode_setting), COMPARATOR_MODE_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_comparator_mode_setting",
-												std::string("Could not set comparator mode bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set comparator mode bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -584,10 +584,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_comparator_polarity_setting(AlertP
 	{
 		BitManipulation::set_bits(raw_settings[1], static_cast<uint8_t>(new_comparator_polarity_setting), COMPARATOR_POLARITY_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_comparator_polarity_setting",
-												std::string("Could not set pin polarity bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set pin polarity bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -610,10 +610,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_comparator_latching_setting(AlertL
 	{
 		BitManipulation::set_bits(raw_settings[1], static_cast<uint8_t>(new_comparator_latching_setting), COMPARATOR_LATCHING_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_comparator_latching_setting",
-												std::string("Could not set comparator latching bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set comparator latching bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -636,10 +636,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_comparator_queue_setting(AlertQueu
 	{
 		BitManipulation::set_bits(raw_settings[1], static_cast<uint8_t>(new_comparator_queue_setting), COMPARATOR_QUEUEING_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_comparator_queue_setting",
-												std::string("Could not set comparator queue bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set comparator queue bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -663,10 +663,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_settings(Configuration new_setting
 		BitManipulation::set_bits(raw_settings[1], static_cast<uint8_t>(new_settings.alert_latching), COMPARATOR_LATCHING_MASK);
 		BitManipulation::set_bits(raw_settings[1], static_cast<uint8_t>(new_settings.alert_queueing), COMPARATOR_QUEUEING_MASK);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_settings",
-												std::string("Could not set setting bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not set setting bits in config byte:\n").append(ex.to_string()));
 	}
 
 	if (write_operation(m_file_handle, CONFIG_REG, raw_settings) != OK)
@@ -724,10 +724,10 @@ void hal::sensors::i2c::ads1115::ADS1115::get_thresholds(uint16_t& lower_thresho
 		upper_threshold = get_upper_threshold();
 		lower_threshold = get_lower_threshold();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "get_thresholds",
-												std::string("Could not read current thresholds from device:\n").append(ex->to_string()));
+												std::string("Could not read current thresholds from device:\n").append(ex.to_string()));
 	}
 }
 
@@ -758,10 +758,10 @@ void hal::sensors::i2c::ads1115::ADS1115::set_thresholds(const uint16_t lower_th
 		set_upper_threshold(upper_threshold);
 		set_lower_threshold(lower_threshold);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "set_thresholds",
-												std::string("Could not write new thresholds to device:\n").append(ex->to_string()));
+												std::string("Could not write new thresholds to device:\n").append(ex.to_string()));
 	}
 }
 
@@ -792,10 +792,10 @@ void hal::sensors::i2c::ads1115::ADS1115::restore_default_thresholds()
 		restore_default_upper_thresholds();
 		restore_default_lower_thresholds();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "restore_default_thresholds",
-												std::string("Could not restore default thresholds:\n").append(ex->to_string()));
+												std::string("Could not restore default thresholds:\n").append(ex.to_string()));
 	}
 }
 
@@ -825,10 +825,10 @@ hal::sensors::i2c::ads1115::Multiplexer hal::sensors::i2c::ads1115::ADS1115::par
 			return Multiplexer::POSITIVE_0_AND_NEGATIVE_1;
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_multiplexer_value",
-												std::string("Could not read value of multiplexer bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not read value of multiplexer bits in config byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -856,10 +856,10 @@ hal::sensors::i2c::ads1115::GainAmplifier hal::sensors::i2c::ads1115::ADS1115::p
 			return GainAmplifier::GAIN_2048_mV;
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_gain_amplifier_value",
-												std::string("Could not read value of gain amplifier bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not read value of gain amplifier bits in config byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -873,10 +873,10 @@ hal::sensors::i2c::ads1115::OperationMode hal::sensors::i2c::ads1115::ADS1115::p
 		}
 		return OperationMode::CONTINUOUS;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_operation_mode_value",
-												std::string("Could not read value of operation mode bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not read value of operation mode bits in config byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -906,10 +906,10 @@ hal::sensors::i2c::ads1115::DataRate hal::sensors::i2c::ads1115::ADS1115::parse_
 			return DataRate::RATE_128_SPS;
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_data_rate_value",
-												std::string("Could not read value of data rate bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not read value of data rate bits in config byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -923,10 +923,10 @@ hal::sensors::i2c::ads1115::ComparatorMode hal::sensors::i2c::ads1115::ADS1115::
 		}
 		return ComparatorMode::HYSTERESIS;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_comparator_mode_value",
-												std::string("Could not read value of comparator mode bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not read value of comparator mode bits in config byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -940,10 +940,10 @@ hal::sensors::i2c::ads1115::AlertPolarity hal::sensors::i2c::ads1115::ADS1115::p
 		}
 		return AlertPolarity::ACTIVE_LOW;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_comparator_polarity_value",
-												std::string("Could not read value of pin polarity bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not read value of pin polarity bits in config byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -957,11 +957,11 @@ hal::sensors::i2c::ads1115::AlertLatching hal::sensors::i2c::ads1115::ADS1115::p
 		}
 		return AlertLatching::DISABLED;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_comparator_latching_value",
 												std::string("Could not read value of comparator latching bits in config byte:\n").append(
-													ex->to_string()));
+													ex.to_string()));
 	}
 }
 
@@ -983,10 +983,10 @@ hal::sensors::i2c::ads1115::AlertQueueing hal::sensors::i2c::ads1115::ADS1115::p
 			return AlertQueueing::DISABLED;
 		}
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "parse_comparator_queueing_value",
-												std::string("Could not read value of comparator queue bits in config byte:\n").append(ex->to_string()));
+												std::string("Could not read value of comparator queue bits in config byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -1022,10 +1022,10 @@ double hal::sensors::i2c::ads1115::ADS1115::convert_to_voltage(const uint16_t ra
 		}
 		return (raw_data * bit_factor) / 1000.0;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("ADS1115", "convert_to_voltage",
-												std::string("Could not read the current gain amplifier setting:\n").append(ex->to_string()));
+												std::string("Could not read the current gain amplifier setting:\n").append(ex.to_string()));
 	}
 }
 
