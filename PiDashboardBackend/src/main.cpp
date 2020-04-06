@@ -15,6 +15,8 @@
 //#include <mysql/mysql.h>
 #include "../../PiHardwareAbstractionLayer/SensorManager.h"
 #include "../../PiHardwareAbstractionLayer/Sensor.h"
+#include "../../PiHardwareAbstractionLayer/utils/EnumConverter.h"
+#include "../../PiHardwareAbstractionLayer/utils/Timezone.h"
 
 //
 //driver::sensors::bme280::barometer* bme280;
@@ -382,6 +384,11 @@ void on_temperature(std::string new_temp)
 	std::cout << "Temperature: " << new_temp << std::endl;
 }
 
+void on_time(std::string new_time)
+{
+	std::cout << "Time: " << new_time << std::endl;
+}
+
 int main()
 {
 	printf("hello from PiSensorBackend!\n");
@@ -392,9 +399,15 @@ int main()
 	//am312_testing();
 	//ads1115_testing();
 
-	auto bme280 = hal::SensorManager::instance().get_sensor(hal::SensorType::TEMPERATURE, hal::SensorName::BME280, 8, hal::Delay::DEFAULT);
+	/*auto bme280 = hal::SensorManager::instance().get_sensor(hal::SensorType::TEMPERATURE, hal::SensorName::BME280, 8, hal::Delay::DEFAULT);
 	bme280->add_value_callback(on_temperature);
-	auto configs = bme280->available_configurations();
+	auto configs = bme280->available_configurations();*/
+
+	auto ds3231 = hal::SensorManager::instance().get_sensor(hal::SensorType::CLOCK, hal::SensorName::DS3231, 8, hal::Delay::VERY_FAST);
+	ds3231->configure(hal::SensorSetting::TIMEZONE, hal::utils::EnumConverter::enum_to_string(hal::utils::WorldTimezones::CENTRAL_EUROPEAN_TIME__CET__PLUS_H01M00));
+	//ds3231->configure(hal::SensorSetting::OUTPUT_FORMAT, hal::utils::EnumConverter::enum_to_string(hal::sensors::i2c::ds3231::OutputFormat::SECONDS_SINCE_EPOCH));
+	//ds3231->configure(hal::SensorSetting::TIME_SYNC, "");
+	ds3231->add_value_callback(on_time);
 
 	while (true)
 	{

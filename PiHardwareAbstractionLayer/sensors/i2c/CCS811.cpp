@@ -21,10 +21,10 @@ void hal::sensors::i2c::ccs811::CCS811::trigger_measurement(const SensorType typ
 			{
 				get_eCO2_data(val);
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("CCS811", "trigger_measurement",
-														std::string("Could not trigger eCO2 measurement:\n").append(ex->to_string()));
+														std::string("Could not trigger eCO2 measurement:\n").append(ex.to_string()));
 			}
 			break;
 		case SensorType::TVOC:
@@ -32,10 +32,10 @@ void hal::sensors::i2c::ccs811::CCS811::trigger_measurement(const SensorType typ
 			{
 				get_TVOC_data(val);
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("CCS811", "trigger_measurement",
-														std::string("Could not trigger TVOC measurement:\n").append(ex->to_string()));
+														std::string("Could not trigger TVOC measurement:\n").append(ex.to_string()));
 			}
 			break;
 		default:
@@ -66,9 +66,9 @@ void hal::sensors::i2c::ccs811::CCS811::configure(const SensorSetting setting, c
 			{
 				set_baseline(&baselines[0]);
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
-				throw exception::HALException("CCS811", "configure", std::string("Could not set baselines:\n").append(ex->to_string()));
+				throw exception::HALException("CCS811", "configure", std::string("Could not set baselines:\n").append(ex.to_string()));
 			}
 		}
 	}
@@ -86,9 +86,9 @@ void hal::sensors::i2c::ccs811::CCS811::configure(const SensorSetting setting, c
 			{
 				set_thresholds(threshold);
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
-				throw exception::HALException("CCS811", "configure", std::string("Could not set thresholds:\n").append(ex->to_string()));
+				throw exception::HALException("CCS811", "configure", std::string("Could not set thresholds:\n").append(ex.to_string()));
 			}
 		}
 	}
@@ -102,9 +102,9 @@ void hal::sensors::i2c::ccs811::CCS811::configure(const SensorSetting setting, c
 			{
 				set_environment_data(env[0], env[1]);
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
-				throw exception::HALException("CCS811", "configure", std::string("Could not set environment data:\n").append(ex->to_string()));
+				throw exception::HALException("CCS811", "configure", std::string("Could not set environment data:\n").append(ex.to_string()));
 			}
 		}
 	}
@@ -121,10 +121,10 @@ std::string hal::sensors::i2c::ccs811::CCS811::get_configuration(const SensorSet
 			const std::vector<uint8_t> bl(std::begin(baseline), std::end(baseline));
 			return Helper::array_to_string(bl);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "get_configuration",
-													std::string("Could not get baseline data:\n").append(ex->to_string()));
+													std::string("Could not get baseline data:\n").append(ex.to_string()));
 		}
 	}
 
@@ -142,9 +142,9 @@ void hal::sensors::i2c::ccs811::CCS811::close()
 	{
 		I2CManager::close_device(m_file_handle);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
-		throw exception::HALException("CCS811", "close", std::string("Could not close device connection:\n").append(ex->to_string()));
+		throw exception::HALException("CCS811", "close", std::string("Could not close device connection:\n").append(ex.to_string()));
 	}
 }
 
@@ -172,18 +172,18 @@ uint8_t hal::sensors::i2c::ccs811::CCS811::init(
 	{
 		I2CManager::open_device(I2CManager::DEFAULT_PI_I2C_PATH, m_dev_id, m_file_handle);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
-		throw exception::HALException("CCS811", "init", std::string("Could not establish connection with device:\n").append(ex->to_string()));
+		throw exception::HALException("CCS811", "init", std::string("Could not establish connection with device:\n").append(ex.to_string()));
 	}
 
 	try
 	{
 		return get_device_information()->device_id;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
-		throw exception::HALException("CCS811", "init", std::string("Could not read device id:\n").append(ex->to_string()));
+		throw exception::HALException("CCS811", "init", std::string("Could not read device id:\n").append(ex.to_string()));
 	}
 }
 
@@ -209,10 +209,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::start()
 			{
 				verify_firmware(fw_state);
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("CCS811", "start",
-														std::string("The device firmware could not be verified:\n").append(ex->to_string()));
+														std::string("The device firmware could not be verified:\n").append(ex.to_string()));
 			}
 		}
 
@@ -223,11 +223,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::start()
 			I2CManager::write_to_device(m_file_handle, APP_START_BOOT_REG, &start_byte, 0);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "start", m_dev_id, APP_START_BOOT_REG,
-													std::string("Could not start device:\n").append(ex->to_string()));
+													std::string("Could not start device:\n").append(ex.to_string()));
 		}
 
 		try
@@ -237,10 +237,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::start()
 				throw exception::HALException("CCS811", "start", "Could not start the device.");
 			}
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "start",
-													std::string("Could not read device status information:\n").append(ex->to_string()));
+													std::string("Could not read device status information:\n").append(ex.to_string()));
 		}
 
 		try
@@ -249,10 +249,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::start()
 			get_operation_mode_information(current_mode);
 			m_current_mode = current_mode->current_mode;
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "start",
-													std::string("Could not read device operation mode:\n").append(ex->to_string()));
+													std::string("Could not read device operation mode:\n").append(ex.to_string()));
 		}
 		return OK;
 	}
@@ -268,11 +268,11 @@ std::shared_ptr<hal::sensors::i2c::ccs811::Status> hal::sensors::i2c::ccs811::CC
 		I2CManager::read_from_device(m_file_handle, STATUS_REG, &raw_status, STATUS_LEN);
 		if (m_use_power_safe_mode) unwake_device();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		if (m_use_power_safe_mode) unwake_device();
 		throw exception::I2CException("CCS811", "get_status_information", m_dev_id, STATUS_REG,
-												std::string("Could not read status information from the device:\n").append(ex->to_string()));
+												std::string("Could not read status information from the device:\n").append(ex.to_string()));
 	}
 
 	auto status = std::make_shared<Status>();
@@ -329,11 +329,11 @@ std::shared_ptr<struct hal::sensors::i2c::ccs811::DeviceInfo> hal::sensors::i2c:
 	{
 		I2CManager::read_from_device(m_file_handle, HARDWARE_ID_REG, &hw_id, HARDWARE_ID_LEN);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		if (m_use_power_safe_mode) unwake_device();
 		throw exception::I2CException("CCS811", "get_device_information", m_dev_id, HARDWARE_ID_REG,
-												std::string("Could not read hardware chip id from the device:\n").append(ex->to_string()));
+												std::string("Could not read hardware chip id from the device:\n").append(ex.to_string()));
 	}
 
 	if (hw_id != HARDWARE_ID_VALUE)
@@ -350,11 +350,11 @@ std::shared_ptr<struct hal::sensors::i2c::ccs811::DeviceInfo> hal::sensors::i2c:
 	{
 		I2CManager::read_from_device(m_file_handle, HARDWARE_VERSION_REG, &hw_version_raw, HARDWARE_VERSION_LEN);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		if (m_use_power_safe_mode) unwake_device();
 		throw exception::I2CException("CCS811", "get_device_information", m_dev_id, HARDWARE_VERSION_REG,
-												std::string("Could not read hardware version from the device:\n").append(ex->to_string()));
+												std::string("Could not read hardware version from the device:\n").append(ex.to_string()));
 	}
 
 	uint8_t fw_version_raw[2] = {0, 0};
@@ -362,11 +362,11 @@ std::shared_ptr<struct hal::sensors::i2c::ccs811::DeviceInfo> hal::sensors::i2c:
 	{
 		I2CManager::read_from_device(m_file_handle, FIRMWARE_VERSION_REG, fw_version_raw, FIRMWARE_VERSION_LEN);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		if (m_use_power_safe_mode) unwake_device();
 		throw exception::I2CException("CCS811", "get_device_information", m_dev_id, FIRMWARE_VERSION_REG,
-												std::string("Could not read firmware version from the device:\n").append(ex->to_string()));
+												std::string("Could not read firmware version from the device:\n").append(ex.to_string()));
 	}
 
 	uint8_t app_version_raw[2] = {0, 0};
@@ -374,11 +374,11 @@ std::shared_ptr<struct hal::sensors::i2c::ccs811::DeviceInfo> hal::sensors::i2c:
 	{
 		I2CManager::read_from_device(m_file_handle, APPLICATION_VERSION_REG, app_version_raw, APPLICATION_VERSION_LEN);
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		if (m_use_power_safe_mode) unwake_device();
 		throw exception::I2CException("CCS811", "get_device_information", m_dev_id, APPLICATION_VERSION_REG,
-												std::string("Could not read application version from the device:\n").append(ex->to_string()));
+												std::string("Could not read application version from the device:\n").append(ex.to_string()));
 	}
 	if (m_use_power_safe_mode) unwake_device();
 
@@ -419,10 +419,10 @@ std::shared_ptr<struct hal::sensors::i2c::ccs811::DeviceInfo> hal::sensors::i2c:
 												.append(".").append(std::to_string(static_cast<int>(app_version_raw[1]))));
 		return info;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::I2CException("CCS811", "get_device_information", m_dev_id, APPLICATION_VERSION_REG,
-												std::string("Could not read value of certain bits from byte:\n").append(ex->to_string()));
+												std::string("Could not read value of certain bits from byte:\n").append(ex.to_string()));
 	}
 }
 
@@ -433,10 +433,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_operation_mode_information(std::sh
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "get_operation_mode_information",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -448,23 +448,23 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_operation_mode_information(std::sh
 			I2CManager::read_from_device(m_file_handle, MODE_REG, &raw_mode, MODE_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "get_operation_mode_information", m_dev_id, MODE_REG,
-													std::string("Could not read mode information from the device:\n").append(ex->to_string()));
+													std::string("Could not read mode information from the device:\n").append(ex.to_string()));
 		}
 
 		mode->raw_mode_info = raw_mode;
-		uint8_t mode_value = 0;
+		uint8_t mode_value;
 		try
 		{
 			mode_value = BitManipulation::value_of_bits(raw_mode, 4, 6);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "get_operation_mode_information",
-													std::string("Could not read value of certain bits from byte:\n").append(ex->to_string()));
+													std::string("Could not read value of certain bits from byte:\n").append(ex.to_string()));
 		}
 
 		switch (mode_value)
@@ -495,10 +495,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_operation_mode_information(std::sh
 			mode->interrupt_generation = BitManipulation::is_bit_set(raw_mode, 3);
 			mode->use_threshold = BitManipulation::is_bit_set(raw_mode, 2);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "get_operation_mode_information",
-													std::string("Could not check interrupt and/or threshold bit:\n").append(ex->to_string()));
+													std::string("Could not check interrupt and/or threshold bit:\n").append(ex.to_string()));
 		}
 		return OK;
 	}
@@ -512,10 +512,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_operation_mode(OperationMode mode,
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "set_operation_mode",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -525,10 +525,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_operation_mode(OperationMode mode,
 		{
 			get_operation_mode_information(current_mode);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "set_operation_mode",
-													std::string("Could not read operation mode information:\n").append(ex->to_string()));
+													std::string("Could not read operation mode information:\n").append(ex.to_string()));
 		}
 
 		// If interrupt generation is currently on, should stay on and private fields for this purpose or uninitialized / set false.
@@ -583,10 +583,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_operation_mode(OperationMode mode,
 		{
 			BitManipulation::set_bits(current_mode->raw_mode_info, new_mode, MODE_MASK);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "set_operation_mode",
-													std::string("Could not write new mode to mode byte:\n").append(ex->to_string()));
+													std::string("Could not write new mode to mode byte:\n").append(ex.to_string()));
 		}
 
 		// Write interrupt mode.
@@ -594,10 +594,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_operation_mode(OperationMode mode,
 		{
 			BitManipulation::set_bit(current_mode->raw_mode_info, 3, interrupt_mode);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "set_operation_mode",
-													std::string("Could not set interrupt mode to false in mode byte:\n").append(ex->to_string()));
+													std::string("Could not set interrupt mode to false in mode byte:\n").append(ex.to_string()));
 		}
 
 		// Write threshold mode.
@@ -605,10 +605,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_operation_mode(OperationMode mode,
 		{
 			BitManipulation::set_bit(current_mode->raw_mode_info, 2, use_thresholds);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "set_operation_mode",
-													std::string("Could not set threshold mode to false in mode byte:\n").append(ex->to_string()));
+													std::string("Could not set threshold mode to false in mode byte:\n").append(ex.to_string()));
 		}
 
 		// Write new mode information to device.
@@ -618,13 +618,13 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_operation_mode(OperationMode mode,
 			I2CManager::write_to_device(m_file_handle, MODE_REG, &current_mode->raw_mode_info, 1);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "set_operation_mode", m_dev_id, MODE_REG,
 													std::string("Could not write new operation mode '").append(std::to_string(static_cast<int>(mode)))
 																														.append("' to device:\n").append(
-																															ex->to_string()));
+																															ex.to_string()));
 		}
 
 		m_current_mode = mode;
@@ -660,10 +660,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_eCO2_data(uint16_t& eCO2) const
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "get_eCO2_data",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -675,11 +675,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_eCO2_data(uint16_t& eCO2) const
 			I2CManager::read_from_device(m_file_handle, RESULT_DATA_REG, raw_results, ECO2_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "get_eCO2_data", m_dev_id, RESULT_DATA_REG,
-													std::string("Could not read eCO2 data from the device:\n").append(ex->to_string()));
+													std::string("Could not read eCO2 data from the device:\n").append(ex.to_string()));
 		}
 
 		eCO2 = BitManipulation::combine_bytes(raw_results[0], raw_results[1]);
@@ -696,10 +696,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_TVOC_data(uint16_t& TVOC) const
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "get_TVOC_data",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -711,11 +711,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_TVOC_data(uint16_t& TVOC) const
 			I2CManager::read_from_device(m_file_handle, RESULT_DATA_REG, raw_results, TVOC_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "get_TVOC_data", m_dev_id, RESULT_DATA_REG,
-													std::string("Could not read TVOC data from the device:\n").append(ex->to_string()));
+													std::string("Could not read TVOC data from the device:\n").append(ex.to_string()));
 		}
 
 		TVOC = BitManipulation::combine_bytes(raw_results[2], raw_results[3]);
@@ -732,10 +732,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_raw_data(std::shared_ptr<RawData>&
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "get_raw_data",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -747,10 +747,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_raw_data(std::shared_ptr<RawData>&
 			raw = std::make_shared<RawData>(results->raw_data);
 			return OK;
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "get_raw_data",
-													std::string("Could not read result data from the device:\n").append(ex->to_string()));
+													std::string("Could not read result data from the device:\n").append(ex.to_string()));
 		}
 	}
 	return WRONG_MODE_WARNING;
@@ -763,10 +763,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_all_result_data(std::shared_ptr<Re
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "get_all_result_data",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -778,11 +778,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_all_result_data(std::shared_ptr<Re
 			I2CManager::read_from_device(m_file_handle, RESULT_DATA_REG, raw_results, RAW_DATA_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "get_all_result_data", m_dev_id, RESULT_DATA_REG,
-													std::string("Could not read all result data from the device:\n").append(ex->to_string()));
+													std::string("Could not read all result data from the device:\n").append(ex.to_string()));
 		}
 
 		result->eco2_value = BitManipulation::combine_bytes(raw_results[0], raw_results[1]);
@@ -794,10 +794,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_all_result_data(std::shared_ptr<Re
 			result->raw_data.voltage = BitManipulation::combine_bytes(BitManipulation::value_of_bits(raw_results[6], 0, 1), raw_results[7]);
 			result->raw_data.current = BitManipulation::value_of_bits(raw_results[6], 2, 7);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "get_all_result_data",
-													std::string("Could not read value of certain bits from byte:\n").append(ex->to_string()));
+													std::string("Could not read value of certain bits from byte:\n").append(ex.to_string()));
 		}
 		return OK;
 	}
@@ -811,10 +811,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_environment_data(uint16_t temperat
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "set_environment_data",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -853,11 +853,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_environment_data(uint16_t temperat
 			I2CManager::write_to_device(m_file_handle, ENV_DATA_REG, environment_data, ENV_HUM_DATA_LEN + ENV_TEMP_DATA_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "set_environment_data", m_dev_id, ENV_DATA_REG,
-													std::string("Could not write environment data to the device:\n").append(ex->to_string()));
+													std::string("Could not write environment data to the device:\n").append(ex.to_string()));
 		}
 		return OK;
 	}
@@ -871,10 +871,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_NTC_data(std::shared_ptr<NTC>& NTC
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "get_NTC_data",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -886,11 +886,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_NTC_data(std::shared_ptr<NTC>& NTC
 			I2CManager::read_from_device(m_file_handle, NTC_REG, ntc_results, NTC_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "get_NTC_data", m_dev_id, NTC_REG,
-													std::string("Could not read NTC data from the device:\n").append(ex->to_string()));
+													std::string("Could not read NTC data from the device:\n").append(ex.to_string()));
 		}
 
 		NTC->v_over_resistor = BitManipulation::combine_bytes(ntc_results[0], ntc_results[1]);
@@ -909,10 +909,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_thresholds(std::shared_ptr<Thresho
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "set_thresholds",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -925,11 +925,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_thresholds(std::shared_ptr<Thresho
 												THRESHOLDS_LOW_MEDIUM_LEN + THRESHOLDS_MEDIUM_HIGH_LEN + THRESHOLDS_HYSTERESIS_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "set_thresholds", m_dev_id, THRESHOLDS_REG,
-													std::string("Could not write thresholds to the device:\n").append(ex->to_string()));
+													std::string("Could not write thresholds to the device:\n").append(ex.to_string()));
 		}
 		return OK;
 	}
@@ -944,10 +944,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_current_baseline(uint8_t baseline[
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "get_current_baseline",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -958,11 +958,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::get_current_baseline(uint8_t baseline[
 			I2CManager::read_from_device(m_file_handle, BASELINE_REG, baseline, BASELINE_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "get_current_baseline", m_dev_id, BASELINE_REG,
-													std::string("Could not read baseline data from the device:\n").append(ex->to_string()));
+													std::string("Could not read baseline data from the device:\n").append(ex.to_string()));
 		}
 		return OK;
 	}
@@ -977,10 +977,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_baseline(uint8_t baseline[BASELINE
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "set_baseline",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == OK)
@@ -991,11 +991,11 @@ int8_t hal::sensors::i2c::ccs811::CCS811::set_baseline(uint8_t baseline[BASELINE
 			I2CManager::write_to_device(m_file_handle, BASELINE_REG, baseline, BASELINE_LEN);
 			if (m_use_power_safe_mode) unwake_device();
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			if (m_use_power_safe_mode) unwake_device();
 			throw exception::I2CException("CCS811", "set_baseline", m_dev_id, BASELINE_REG,
-													std::string("Could not write baseline data to the device:\n").append(ex->to_string()));
+													std::string("Could not write baseline data to the device:\n").append(ex.to_string()));
 		}
 		return OK;
 	}
@@ -1010,10 +1010,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::delete_current_firmware() const
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "delete_current_firmware",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == 1) // Device is in BOOT mode
@@ -1031,10 +1031,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::write_new_firmware(std::shared_ptr<uin
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "write_new_firmware",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == 1) // Device is in BOOT mode
@@ -1052,10 +1052,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::verify_firmware(bool& firmware_valid) 
 	{
 		device_mode = check_device_mode();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "verify_firmware",
-												std::string("Could not read current device mode:\n").append(ex->to_string()));
+												std::string("Could not read current device mode:\n").append(ex.to_string()));
 	}
 
 	if (device_mode == 1) // Device is in BOOT mode
@@ -1077,10 +1077,10 @@ int8_t hal::sensors::i2c::ccs811::CCS811::check_device_mode() const
 
 		return OK;
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		throw exception::HALException("CCS811", "check_device_mode",
-												std::string("Could not read current state from the device:\n").append(ex->to_string()));
+												std::string("Could not read current state from the device:\n").append(ex.to_string()));
 	}
 }
 
@@ -1093,11 +1093,11 @@ uint8_t hal::sensors::i2c::ccs811::CCS811::read_error() const
 		I2CManager::read_from_device(m_file_handle, ERROR_REG, error_code, ERROR_LEN);
 		if (m_use_power_safe_mode) unwake_device();
 	}
-	catch (exception::HALException* ex)
+	catch (exception::HALException& ex)
 	{
 		if (m_use_power_safe_mode) unwake_device();
 		throw exception::I2CException("CCS811", "read_error", m_dev_id, ERROR_REG,
-												std::string("Could not read error data from the device:\n").append(ex->to_string()));
+												std::string("Could not read error data from the device:\n").append(ex.to_string()));
 	}
 	return error_code[0];
 }
@@ -1162,10 +1162,10 @@ void hal::sensors::i2c::ccs811::CCS811::interrupt_mode_loop()
 		{
 			get_all_result_data(results);
 		}
-		catch (exception::HALException* ex)
+		catch (exception::HALException& ex)
 		{
 			throw exception::HALException("CCS811", "interrupt_mode_loop",
-													std::string("Could not read result data:\n").append(ex->to_string()));
+													std::string("Could not read result data:\n").append(ex.to_string()));
 		}
 
 		// Execute callbacks with new values

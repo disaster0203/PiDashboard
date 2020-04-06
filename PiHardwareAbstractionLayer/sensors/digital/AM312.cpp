@@ -13,10 +13,10 @@ void hal::sensors::digital::am312::AM312::trigger_measurement(const SensorType t
 			{
 				(*i)->callback(std::to_string(digitalRead(m_pin)));
 			}
-			catch (exception::HALException* ex)
+			catch (exception::HALException& ex)
 			{
 				throw exception::HALException("AM312", "trigger_measurement",
-														std::string("Could not trigger motion measurement:\n").append(ex->to_string()));
+														std::string("Could not trigger motion measurement:\n").append(ex.to_string()));
 			}
 			break;
 		default:

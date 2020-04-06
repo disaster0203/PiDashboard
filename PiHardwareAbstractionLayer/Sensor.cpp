@@ -4,6 +4,7 @@
 #include "sensors/i2c/ADS1115.h"
 #include "sensors/i2c/BME280.h"
 #include "sensors/i2c/CCS811.h"
+#include "sensors/i2c/DS3231.h"
 #include "utils/Helper.h"
 
 hal::Sensor::~Sensor()
@@ -34,7 +35,7 @@ hal::Sensor::Sensor(
 	m_sensor_thread = new std::thread(&Sensor::thread_loop, this);
 }
 
-void hal::Sensor::configure(const SensorSetting setting, const std::string configuration)
+void hal::Sensor::configure(const SensorSetting setting, const std::string& configuration)
 {
 	// Lock m_sensor
 	std::lock_guard<std::mutex> guard(m_mutex);
@@ -47,22 +48,22 @@ void hal::Sensor::configure(const SensorSetting setting, const std::string confi
 	switch (m_name)
 	{
 	case SensorName::BME280:
-		static_cast<sensors::i2c::bme280::BME280*>(m_sensor)->configure(setting, configuration);
+		dynamic_cast<sensors::i2c::bme280::BME280*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::CCS811:
-		static_cast<sensors::i2c::ccs811::CCS811*>(m_sensor)->configure(setting, configuration);
+		dynamic_cast<sensors::i2c::ccs811::CCS811*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::KY_018:
-		static_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->configure(setting, configuration);
+		dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::ADS1115:
 		//static_cast<sensors::analog::ky018::KY018*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::AM312:
-		static_cast<sensors::digital::am312::AM312*>(m_sensor)->configure(setting, configuration);
+		dynamic_cast<sensors::digital::am312::AM312*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::DS3231:
-		//static_cast<sensors::i2c::ds3231::DS3231*>(m_sensor)->configure(setting, configuration);
+		dynamic_cast<sensors::i2c::ds3231::DS3231*>(m_sensor)->configure(setting, configuration);
 		break;
 	default:
 		break;
@@ -79,26 +80,26 @@ std::string hal::Sensor::get_configuration(const SensorSetting setting)
 		throw exception::HALException("Sensor", "get_configuration", "Sensor pointer is null.");
 	}
 
-	std::string result = "";
+	std::string result;
 	switch (m_name)
 	{
 	case SensorName::BME280:
-		result = static_cast<sensors::i2c::bme280::BME280*>(m_sensor)->get_configuration(setting);
+		result = dynamic_cast<sensors::i2c::bme280::BME280*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::CCS811:
-		result = static_cast<sensors::i2c::ccs811::CCS811*>(m_sensor)->get_configuration(setting);
+		result = dynamic_cast<sensors::i2c::ccs811::CCS811*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::KY_018:
-		result = static_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->get_configuration(setting);
+		result = dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::ADS1115:
 		//result = static_cast<sensors::analog::ky018::KY018*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::AM312:
-		result = static_cast<sensors::digital::am312::AM312*>(m_sensor)->get_configuration(setting);
+		result = dynamic_cast<sensors::digital::am312::AM312*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::DS3231:
-		//result = static_cast<sensors::i2c::ds3231::DS3231*>(m_sensor)->get_configuration(setting);
+		result = dynamic_cast<sensors::i2c::ds3231::DS3231*>(m_sensor)->get_configuration(setting);
 		break;
 	default:
 		break;
@@ -135,7 +136,7 @@ std::vector<hal::SensorSetting> hal::Sensor::available_configurations()
 		result = static_cast<sensors::digital::am312::AM312*>(m_sensor)->available_configurations();
 		break;
 	case SensorName::DS3231:
-		//result = static_cast<sensors::i2c::ds3231::DS3231*>(m_sensor)->available_configurations();
+		result = static_cast<sensors::i2c::ds3231::DS3231*>(m_sensor)->available_configurations();
 		break;
 	default:
 		break;
@@ -177,7 +178,7 @@ void hal::Sensor::shutdown()
 	}
 }
 
-std::shared_ptr<hal::CallbackHandle> hal::Sensor::add_value_callback(const std::function<void(std::string)> on_value)
+std::shared_ptr<hal::CallbackHandle> hal::Sensor::add_value_callback(const std::function<void(std::string)>& on_value)
 {
 	auto handle = std::make_shared<CallbackHandle>(CallbackHandle(on_value, get_unique_handle()));
 	std::lock_guard<std::mutex> guard(m_mutex);
@@ -185,7 +186,7 @@ std::shared_ptr<hal::CallbackHandle> hal::Sensor::add_value_callback(const std::
 	return handle;
 }
 
-void hal::Sensor::remove_value_callback(const std::shared_ptr<CallbackHandle> handle)
+void hal::Sensor::remove_value_callback(const std::shared_ptr<CallbackHandle>& handle)
 {
 	std::lock_guard<std::mutex> guard(m_mutex);
 	m_value_callbacks_to_remove.push_back(handle);

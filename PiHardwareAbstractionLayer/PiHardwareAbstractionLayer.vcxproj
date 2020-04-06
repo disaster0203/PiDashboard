@@ -99,12 +99,17 @@
     <ClInclude Include="sensors\i2c\CCS811.h" />
     <ClInclude Include="sensors\i2c\CCS811Constants.h" />
     <ClInclude Include="sensors\i2c\CCS811Definitions.h" />
+    <ClInclude Include="sensors\i2c\DS3231.h" />
+    <ClInclude Include="sensors\i2c\DS3231Constants.h" />
+    <ClInclude Include="sensors\i2c\DS3231Definitions.h" />
     <ClInclude Include="structs\CallbackHandle.h" />
     <ClInclude Include="utils\BitManipulation.h" />
     <ClInclude Include="utils\Constants.h" />
     <ClInclude Include="utils\EnumConverter.h" />
     <ClInclude Include="utils\Helper.h" />
     <ClInclude Include="utils\I2CManager.h" />
+    <ClInclude Include="utils\TerminalAccess.h" />
+    <ClInclude Include="utils\Timezone.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Sensor.cpp" />
@@ -113,6 +118,7 @@
     <ClCompile Include="sensors\i2c\ADS1115.cpp" />
     <ClCompile Include="sensors\i2c\BME280.cpp" />
     <ClCompile Include="sensors\i2c\CCS811.cpp" />
+    <ClCompile Include="sensors\i2c\DS3231.cpp" />
     <ClCompile Include="utils\I2CManager.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
