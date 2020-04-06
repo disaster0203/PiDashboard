@@ -49,10 +49,10 @@ namespace hal
 								{
 									(*i)->callback(std::to_string(get_resistance()));
 								}
-								catch (exception::HALException* ex)
+								catch (exception::HALException& ex)
 								{
 									throw exception::HALException("KY018", "trigger_measurement",
-																			std::string("Could not trigger light measurement:\n").append(ex->to_string()));
+																			std::string("Could not trigger light measurement:\n").append(ex.to_string()));
 								}
 							}
 							else
@@ -114,11 +114,11 @@ namespace hal
 								m_converter->set_multiplexer_setting(EnumConverter::string_to_multiplexer(configuration));
 							}
 						}
-						catch (exception::HALException* ex)
+						catch (exception::HALException& ex)
 						{
 							throw exception::HALException("KY018", "configure",
 																	std::string("Could not change a setting of the devices AD-converter:\n").append(
-																		ex->to_string()));
+																		ex.to_string()));
 						}
 					}
 
@@ -134,11 +134,11 @@ namespace hal
 						{
 							return m_converter->get_configuration(setting);
 						}
-						catch (exception::HALException* ex)
+						catch (exception::HALException& ex)
 						{
 							throw exception::HALException("KY018", "get_configuration",
 																	std::string("Could not get a setting from the devices AD-converter:\n").append(
-																		ex->to_string()));
+																		ex.to_string()));
 						}
 					}
 
@@ -162,10 +162,10 @@ namespace hal
 						{
 							m_converter->close();
 						}
-						catch (exception::HALException* ex)
+						catch (exception::HALException& ex)
 						{
 							throw exception::HALException("KY018", "close",
-																	std::string("Could not close the devices AD-converter:\n").append(ex->to_string()));
+																	std::string("Could not close the devices AD-converter:\n").append(ex.to_string()));
 						}
 					}
 
@@ -219,11 +219,11 @@ namespace hal
 							// Clamp voltage
 							return std::fmaxl(std::fminl(m_max_voltage, voltage), m_min_voltage);
 						}
-						catch (exception::HALException* ex)
+						catch (exception::HALException& ex)
 						{
 							throw exception::HALException("KY018", "get_voltage",
 																	std::string("Could not get a voltage value from the devices AD-converter:\n").append(
-																		ex->to_string()));
+																		ex.to_string()));
 						}
 					}
 
@@ -240,11 +240,11 @@ namespace hal
 							const auto voltage = get_voltage();
 							return 10000 * voltage / (m_max_voltage - voltage);
 						}
-						catch (exception::HALException* ex)
+						catch (exception::HALException& ex)
 						{
 							throw exception::HALException("KY018", "get_resistance",
 																	std::string("Could not get a voltage value from the devices AD-converter:\n").append(
-																		ex->to_string()));
+																		ex.to_string()));
 						}
 					}
 

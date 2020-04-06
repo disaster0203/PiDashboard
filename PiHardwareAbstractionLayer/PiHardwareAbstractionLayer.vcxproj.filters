@@ -18,6 +18,9 @@
     </ClCompile>
     <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="SensorManager.cpp" />
+    <ClCompile Include="sensors\i2c\DS3231.cpp">
+      <Filter>sensors\i2c</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sensors\i2c\CCS811.h">
@@ -100,6 +103,21 @@
     </ClInclude>
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="SensorManager.h" />
+    <ClInclude Include="sensors\i2c\DS3231.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\DS3231Constants.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\i2c\DS3231Definitions.h">
+      <Filter>sensors\i2c</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\Timezone.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\TerminalAccess.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sensors">

@@ -61,7 +61,7 @@ namespace hal
 		* to string because each sensor needs its own data format and this way the specific conversion can be
 		* done easily on each sensor.
 		*/
-		void configure(SensorSetting setting, std::string configuration);
+		void configure(SensorSetting setting, const std::string& configuration);
 
 		/*!
 		* Returns one specific setting of a sensor.
@@ -103,13 +103,13 @@ namespace hal
 		* \param[in] on_value: The new callback to add.
 		* \returns a CallbackHandle object that contains the callback function together with its unique handle.
 		*/
-		std::shared_ptr<CallbackHandle> add_value_callback(std::function<void(std::string)> on_value);
+		std::shared_ptr<CallbackHandle> add_value_callback(const std::function<void(std::string)>& on_value);
 
 		/*!
 		* Removes a callback from the sensor.
 		* \param[in] handle: The handle of the callback to remove.
 		*/
-		void remove_value_callback(std::shared_ptr<CallbackHandle> handle);
+		void remove_value_callback(const std::shared_ptr<CallbackHandle>& handle);
 
 		/*!
 		* Return the type of the sensor.

@@ -53,13 +53,12 @@ namespace hal
 					byte |= static_cast<uint8_t>(1 << bit_index);
 				}
 
-				byte |= static_cast<uint8_t>(0 << bit_index);
+				byte &= static_cast<uint8_t>(~(1 << bit_index));
 			}
 
 			//! Sets the bit at the given index to the given value.
 			/*!
 			*  Sets the bit at the given index to the given value.
-			*  The first bit is the right most number in the byte array and has the index 0.
 			* \param[out] byte: The byte value.
 			* \param[in] value: The value to place at the position the mask defines
 			* \param[in] mask: Defines the position where the new value should be placed inside the byte (1s for bits to affect, 0s for bits to ignore.
@@ -156,6 +155,44 @@ namespace hal
 				}
 
 				return static_cast<uint8_t>((mask & byte) >> start_bit);
+			}
+
+			//! Combines the bcd parts of a number with two places (0-99).
+			/*!
+			* Combines the bcd parts of a number with two places (0-99).
+			* \param[in] first_bcd_place: The lower part of the bcd (e.g. '1' in case of the complete value '31').
+			* \param[in] second_bcd_place: The high part of the bcd (e.g. '3' in case of the complete value '31').
+			* \returns The combined value of the bcd numbers in decimal format.
+			*/
+			static uint8_t from_bcd(const uint8_t first_bcd_place, const uint8_t second_bcd_place)
+			{
+				return static_cast<uint8_t>((second_bcd_place * static_cast<uint8_t>(10)) + first_bcd_place);
+			}
+
+			//! Splits a 2 place-decimal number (0-99) in two bcd parts.
+			/*!
+			* Splits a 2 place-decimal number (0-99) in two bcd parts.
+			* \param[in] decimal_number: The decimal number to split.
+			* \param[out] first_bcd_place: The lower part of the bcd (e.g. '1' in case of the complete value '31').
+			* \param[out] second_bcd_place: The high part of the bcd (e.g. '3' in case of the complete value '31').
+			*/
+			static void to_bcd(const uint8_t decimal_number, uint8_t& first_bcd_place, uint8_t& second_bcd_place)
+			{
+				first_bcd_place = decimal_number % static_cast<uint8_t>(10);
+				second_bcd_place = static_cast<uint8_t>(decimal_number - first_bcd_place) / static_cast<uint8_t>(10);
+			}
+
+			//! Converts a 2 place-decimal number (0-99) to bcd.
+			/*!
+			* Converts a 2 place-decimal number (0-99) to bcd.
+			* \param[in] decimal_number: The decimal number to split.
+			* \returns The converted bcd value.
+			*/
+			static uint8_t to_bcd(const uint8_t decimal_number)
+			{
+				uint8_t first_bcd_place, second_bcd_place;
+				to_bcd(decimal_number, first_bcd_place, second_bcd_place);
+				return static_cast<uint8_t>((second_bcd_place << 4) | first_bcd_place);
 			}
 
 			//! Performs a left shift operation on a given byte.

@@ -226,7 +226,7 @@ namespace hal
 					*/
 					void get_all_data(double& temperature, double& pressure, double& humidity);
 
-				private:
+				protected:
 					//! Reads the calibration constants for compensation of the three sensor values from the device.
 					/*!
 					*  Reads the calibration constants for compensation of the three sensor values from the device.

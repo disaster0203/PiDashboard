@@ -5,10 +5,13 @@ namespace hal
 	/*! Defines the idle time between two sensor measurements. */
 	enum class Delay
 	{
-		SLOW = 30000,
 		/*!< 30 seconds */
-		DEFAULT = 5000,
+		SLOW = 30000,
 		/*! 5 seconds */
-		FAST = 1000 /*! 1 second */
+		DEFAULT = 5000,
+		/*! 1 second */
+		FAST = 1000,
+		/*! 750 milliseconds */
+		VERY_FAST = 750
 	};
 }
