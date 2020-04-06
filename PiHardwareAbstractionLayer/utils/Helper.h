@@ -106,7 +106,7 @@ namespace hal
 			*/
 			static bool string_to_bool(const std::string& str) noexcept
 			{
-				if (str == "1") == 0 || str.compare("true") == 0 || str.compare("True") == 0 || str.compare("TRUE")
+				if (str == "1" || str == "true" || str == "True" || str == "TRUE")
 				{
 					return true;
 				}

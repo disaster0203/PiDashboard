@@ -406,7 +406,7 @@ int main()
 	auto ds3231 = hal::SensorManager::instance().get_sensor(hal::SensorType::CLOCK, hal::SensorName::DS3231, 8, hal::Delay::VERY_FAST);
 	ds3231->configure(hal::SensorSetting::TIMEZONE, hal::utils::EnumConverter::enum_to_string(hal::utils::WorldTimezones::CENTRAL_EUROPEAN_TIME__CET__PLUS_H01M00));
 	//ds3231->configure(hal::SensorSetting::OUTPUT_FORMAT, hal::utils::EnumConverter::enum_to_string(hal::sensors::i2c::ds3231::OutputFormat::SECONDS_SINCE_EPOCH));
-	ds3231->configure(hal::SensorSetting::TIME_SYNC, "");
+	//ds3231->configure(hal::SensorSetting::TIME_SYNC, "");
 	ds3231->add_value_callback(on_time);
 
 	while (true)
