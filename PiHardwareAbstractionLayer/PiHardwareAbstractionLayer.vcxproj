@@ -85,6 +85,7 @@
     <ClInclude Include="exceptions\GPIOException.h" />
     <ClInclude Include="exceptions\HALException.h" />
     <ClInclude Include="exceptions\I2CException.h" />
+    <ClInclude Include="interfaces\IConverter.h" />
     <ClInclude Include="interfaces\ISensor.h" />
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="SensorManager.h" />
