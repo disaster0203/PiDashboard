@@ -261,6 +261,10 @@ void hal::sensors::i2c::ads1115::ADS1115::close()
 void hal::sensors::i2c::ads1115::ADS1115::init(const uint8_t device_reg)
 {
 	m_dev_id = device_reg;
+	m_analog_pins[0] = false;
+	m_analog_pins[1] = false;
+	m_analog_pins[2] = false;
+	m_analog_pins[3] = false;
 
 	try
 	{

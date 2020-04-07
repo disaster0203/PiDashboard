@@ -1,11 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <map>
 
 #include "ADS1115Definitions.h"
 #include "ADS1115Constants.h"
 #include "../../enums/SensorSetting.h"
-#include "../../interfaces/ISensor.h"
+#include "../../interfaces/IConverter.h"
 #include "../../utils/EnumConverter.h"
 
 using namespace hal::utils;
@@ -22,7 +23,7 @@ namespace hal
 				/*!
 				* This class implements various functions to configure the converter and receive the converted data.
 				*/
-				class ADS1115 final : public interfaces::ISensor
+				class ADS1115 final : public interfaces::IConverter
 				{
 				public:
 					//! Default constructor.
