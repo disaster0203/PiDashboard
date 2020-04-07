@@ -2,11 +2,15 @@
 
 #include <mutex>
 #include <cmath>
+#include <type_traits>
+#include <vector>
 
 #include "../../enums/SensorSetting.h"
 #include "../../interfaces/ISensor.h"
+#include "../../interfaces/IConverter.h"
 #include "../../utils/EnumConverter.h"
 #include "../../utils/Helper.h"
+#include "../i2c/ADS1115.h"
 
 using namespace hal::utils;
 
@@ -22,7 +26,6 @@ namespace hal
 				/*!
 				* This class implements functions to read the sensors data by using an ad converter.
 				*/
-				template <class Converter, typename Multiplexer, typename Gain>
 				class KY018 final : public interfaces::ISensor
 				{
 				public:
@@ -49,10 +52,10 @@ namespace hal
 								{
 									(*i)->callback(std::to_string(get_resistance()));
 								}
-								catch (exception::HALException& ex)
+								catch (exception::HALException & ex)
 								{
 									throw exception::HALException("KY018", "trigger_measurement",
-																			std::string("Could not trigger light measurement:\n").append(ex.to_string()));
+										std::string("Could not trigger light measurement:\n").append(ex.to_string()));
 								}
 							}
 							else
@@ -77,48 +80,56 @@ namespace hal
 					{
 						try
 						{
-							if (setting == SensorSetting::COMPARATOR_LATCHING)
+							if (dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter))
 							{
-								m_converter->set_comparator_latching_setting(EnumConverter::string_to_alert_latching(configuration));
-							}
-							else if (setting == SensorSetting::COMPARATOR_MODE)
-							{
-								m_converter->set_comparator_mode_setting(EnumConverter::string_to_comparator_mode(configuration));
-							}
-							else if (setting == SensorSetting::COMPARATOR_QUEUE)
-							{
-								m_converter->set_comparator_queue_setting(EnumConverter::string_to_alert_queueing(configuration));
-							}
-							else if (setting == SensorSetting::DATA_RATE)
-							{
-								m_converter->set_data_rate_setting(EnumConverter::string_to_data_rate(configuration));
-							}
-							else if (setting == SensorSetting::GAIN_AMPLIFIER)
-							{
-								m_converter->set_gain_amplifier_setting(EnumConverter::string_to_gain_amplifier(configuration));
-							}
-							else if (setting == SensorSetting::THRESHOLD)
-							{
-								if (Helper::string_contains_separator(configuration))
+								if (setting == SensorSetting::COMPARATOR_LATCHING)
 								{
-									std::vector<uint16_t> thresholds;
-									Helper::string_to_array(thresholds, configuration);
-									if (thresholds.size() == 2)
+									dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_comparator_latching_setting(EnumConverter::string_to_alert_latching(configuration));
+								}
+								else if (setting == SensorSetting::COMPARATOR_MODE)
+								{
+									dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_comparator_mode_setting(EnumConverter::string_to_comparator_mode(configuration));
+								}
+								else if (setting == SensorSetting::COMPARATOR_QUEUE)
+								{
+									dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_comparator_queue_setting(EnumConverter::string_to_alert_queueing(configuration));
+								}
+								else if (setting == SensorSetting::DATA_RATE)
+								{
+									dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_data_rate_setting(EnumConverter::string_to_data_rate(configuration));
+								}
+								else if (setting == SensorSetting::GAIN_AMPLIFIER)
+								{
+									dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_gain_amplifier_setting(EnumConverter::string_to_gain_amplifier(configuration));
+								}
+								else if (setting == SensorSetting::THRESHOLD)
+								{
+									if (Helper::string_contains_separator(configuration))
 									{
-										m_converter->set_thresholds(thresholds[0], thresholds[1]);
+										std::vector<uint16_t> thresholds;
+										Helper::string_to_array(thresholds, configuration);
+										if (thresholds.size() == 2)
+										{
+											dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_thresholds(thresholds[0], thresholds[1]);
+										}
 									}
 								}
+								else if (setting == SensorSetting::MULTIPLEXER)
+								{
+									dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_multiplexer_setting(EnumConverter::string_to_multiplexer(configuration));
+								}
 							}
-							else if (setting == SensorSetting::MULTIPLEXER)
+							// if (std::is_same<Converter, converter_XYZ>::value) { ... }
+							else
 							{
-								m_converter->set_multiplexer_setting(EnumConverter::string_to_multiplexer(configuration));
+								throw exception::HALException("KY018", "configure", "Unsupported converter type.");
 							}
 						}
-						catch (exception::HALException& ex)
+						catch (exception::HALException & ex)
 						{
 							throw exception::HALException("KY018", "configure",
-																	std::string("Could not change a setting of the devices AD-converter:\n").append(
-																		ex.to_string()));
+								std::string("Could not change a setting of the devices AD-converter:\n").append(
+									ex.to_string()));
 						}
 					}
 
@@ -134,11 +145,11 @@ namespace hal
 						{
 							return m_converter->get_configuration(setting);
 						}
-						catch (exception::HALException& ex)
+						catch (exception::HALException & ex)
 						{
 							throw exception::HALException("KY018", "get_configuration",
-																	std::string("Could not get a setting from the devices AD-converter:\n").append(
-																		ex.to_string()));
+								std::string("Could not get a setting from the devices AD-converter:\n").append(
+									ex.to_string()));
 						}
 					}
 
@@ -162,10 +173,10 @@ namespace hal
 						{
 							m_converter->close();
 						}
-						catch (exception::HALException& ex)
+						catch (exception::HALException & ex)
 						{
 							throw exception::HALException("KY018", "close",
-																	std::string("Could not close the devices AD-converter:\n").append(ex.to_string()));
+								std::string("Could not close the devices AD-converter:\n").append(ex.to_string()));
 						}
 					}
 
@@ -177,23 +188,25 @@ namespace hal
 					* \param[in] sensor_gain: The gain amplification setting of the sensor/ad-converter.
 					* \throws HALException if the converter is not yet initialized and could not be setup.
 					*/
-					void init(std::shared_ptr<Converter> converter, Multiplexer sensor_multiplexer_mode, Gain sensor_gain)
+					void init(interfaces::IConverter* converter, uint8_t analog_pin)
 					{
 						m_converter = converter;
-						m_sensor_multiplexer_mode = sensor_multiplexer_mode;
-						m_sensor_gain = sensor_gain;
+						m_analog_pin = analog_pin;
 
-						// If the ADS1115 device is not yet fully setup, initialize it
+						// If the converter device is not yet fully setup, initialize it
 						uint8_t try_count = 0;
 						m_mutex.lock();
-						while (!m_converter->is_initialized())
+						if (dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter))
 						{
-							m_converter->init();
-							try_count++;
-							if (try_count == 5)
+							while (!dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->is_initialized())
 							{
-								m_mutex.unlock();
-								throw exception::HALException("KY018", "init", "Could not initialize analog digital converter (ADS1115).");
+								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->init();
+								try_count++;
+								if (try_count == 5)
+								{
+									m_mutex.unlock();
+									throw exception::HALException("KY018", "init", "Could not initialize analog digital converter.");
+								}
 							}
 						}
 						m_mutex.unlock();
@@ -209,21 +222,56 @@ namespace hal
 					{
 						try
 						{
-							m_mutex.lock(); // Lock the shared ADS1115 pointer to avoid conflicts (we need to change multiplexer and gain)
-							m_converter->set_multiplexer_setting(m_sensor_multiplexer_mode); // Set multiplexer
-							m_converter->set_gain_amplifier_setting(m_sensor_gain); // Set gain amplifier
-							m_converter->start_single_conversion(); // Trigger new conversion
-							auto voltage = m_converter->get_converted_data(); // Receive the new voltage data from the ADS1115
-							m_mutex.unlock(); // Unlock ADS1115 pointer
+							if (dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter))
+							{
+								m_mutex.lock(); // Lock the shared ADS1115 pointer to avoid conflicts (we need to change multiplexer and gain)
+								auto multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_0_AND_NEGATIVE_GND;
+								switch (m_analog_pin)
+								{
+								case 0:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_0_AND_NEGATIVE_GND;
+								case 1:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_1_AND_NEGATIVE_GND;
+								case 2:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_2_AND_NEGATIVE_GND;
+								case 3:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_3_AND_NEGATIVE_GND;
+								case 4:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_0_AND_NEGATIVE_1;
+								case 5:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_0_AND_NEGATIVE_3;
+								case 6:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_1_AND_NEGATIVE_3;
+								case 7:
+									multiplexer = sensors::i2c::ads1115::Multiplexer::POSITIVE_2_AND_NEGATIVE_3;
+								default:
+									break;
+								}
+								// Set multiplexer
+								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_multiplexer_setting(multiplexer);
+								// For simplicity set gain amplifier always to 2048mV
+								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_gain_amplifier_setting(sensors::i2c::ads1115::GainAmplifier::GAIN_2048_mV);
+								// Trigger new conversion
+								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->start_single_conversion();
+								// Receive the new voltage data from the ADS1115
+								auto voltage = dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->get_converted_data();
+								// Unlock ADS1115 pointer
+								m_mutex.unlock();
 
-							// Clamp voltage
-							return std::fmaxl(std::fminl(m_max_voltage, voltage), m_min_voltage);
+								// Clamp voltage
+								return std::fmaxl(std::fminl(m_max_voltage, voltage), m_min_voltage);
+							}
+							// if (std::is_same<Converter, converter_XYZ>::value) { ... }
+							else
+							{
+								throw exception::HALException("KY018", "get_voltage", "Unsupported converter type.");
+							}
 						}
-						catch (exception::HALException& ex)
+						catch (exception::HALException & ex)
 						{
 							throw exception::HALException("KY018", "get_voltage",
-																	std::string("Could not get a voltage value from the devices AD-converter:\n").append(
-																		ex.to_string()));
+								std::string("Could not get a voltage value from the devices AD-converter:\n").append(
+									ex.to_string()));
 						}
 					}
 
@@ -240,18 +288,17 @@ namespace hal
 							const auto voltage = get_voltage();
 							return 10000 * voltage / (m_max_voltage - voltage);
 						}
-						catch (exception::HALException& ex)
+						catch (exception::HALException & ex)
 						{
 							throw exception::HALException("KY018", "get_resistance",
-																	std::string("Could not get a voltage value from the devices AD-converter:\n").append(
-																		ex.to_string()));
+								std::string("Could not get a voltage value from the devices AD-converter:\n").append(
+									ex.to_string()));
 						}
 					}
 
 				private:
-					std::shared_ptr<Converter> m_converter;
-					Multiplexer m_sensor_multiplexer_mode;
-					Gain m_sensor_gain;
+					interfaces::IConverter* m_converter;
+					uint8_t m_analog_pin;
 					double m_max_voltage = 5.0;
 					double m_min_voltage = 0.0;
 					std::mutex m_mutex;
