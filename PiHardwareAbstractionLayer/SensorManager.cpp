@@ -2,6 +2,10 @@
 #include "exceptions/HALException.h"
 #include "sensors/i2c/BME280.h"
 #include "sensors/i2c/DS3231.h"
+#include "sensors/i2c/ADS1115.h"
+#include "sensors/i2c/CCS811.h"
+#include "sensors/analog/KY018.h"
+#include "sensors/analog/MICS6814.h"
 
 hal::SensorManager& hal::SensorManager::instance()
 {
@@ -39,7 +43,9 @@ hal::Sensor* hal::SensorManager::get_sensor(const SensorType type, SensorName na
 		vendor = "Texas Instruments";
 		break;
 	case SensorName::ADS1115:
-		throw exception::HALException("SensorManager", "get_sensor", "Invalid combination of sensor name (ADS1115) and sensor type.");
+		com_type = CommunicationType::ANALOG_I2C;
+		vendor = "Texas Instruments";
+		break;
 	case SensorName::AM312:
 		com_type = CommunicationType::DIGITAL;
 		vendor = "NANYANG SENBA OPTICAL AND ELECTRONIC CO.,LTD.";
@@ -137,8 +143,24 @@ void hal::SensorManager::create_hardware_pointer(const SensorType type, SensorNa
 	{
 		if (type == SensorType::LIGHT)
 		{
-			//auto sensor = new Sensors::Analog::KY_018::KY_018();
-			//m_hardware_map[std::make_pair(name, pin)] = sensor;
+			if (!is_hardware_running(SensorName::ADS1115, 3)) // && is_hardware_running(SensorName::Converter_XYZ, 3) || ...
+			{
+				create_hardware_pointer(SensorType::CONVERTER, available_sensors_of_type(SensorType::CONVERTER)[0], 3);
+			}
+
+			if (is_hardware_running(SensorName::ADS1115, 3))
+			{
+				auto sensor = new sensors::analog::ky018::KY018();
+				dynamic_cast<interfaces::IConverter*>(m_hardware_map[std::make_pair(SensorName::ADS1115, 3)])->register_analog_device(pin);
+				sensor->init(dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_hardware_map[std::make_pair(SensorName::ADS1115, 3)]), pin);
+				m_hardware_map[std::make_pair(name, pin)] = sensor;
+			}
+			// if (is_hardware_running(SensorName::Converter_XYZ, 3)) { ... }
+			else
+			{
+				throw exception::HALException("SensorManager", "create_hardware_pointer",
+					"No AD-converter found for analog sensor 'KY-018'.");
+			}
 		}
 		else
 		{
@@ -149,8 +171,17 @@ void hal::SensorManager::create_hardware_pointer(const SensorType type, SensorNa
 	break;
 	case SensorName::ADS1115:
 	{
-		throw exception::HALException("SensorManager", "create_hardware_pointer",
-			"Invalid combination of sensor name (ADS1115) and sensor type.");
+		if (type == SensorType::CONVERTER)
+		{
+			auto converter = new sensors::i2c::ads1115::ADS1115();
+			converter->init();
+			m_hardware_map[std::make_pair(name, pin)] = converter;
+		}
+		else
+		{
+			throw exception::HALException("SensorManager", "create_hardware_pointer",
+				"Invalid combination of sensor name (ADS1115) and sensor type.");
+		}
 	}
 	case SensorName::AM312:
 	{

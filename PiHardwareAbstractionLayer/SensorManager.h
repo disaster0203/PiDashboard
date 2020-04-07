@@ -99,7 +99,8 @@ namespace hal
 			{SensorType::CO2, {SensorName::CCS811}},
 			{SensorType::TVOC, {SensorName::CCS811}},
 			{SensorType::LIGHT, {SensorName::KY_018}},
-			{SensorType::MOTION, {SensorName::AM312}}
+			{SensorType::MOTION, {SensorName::AM312}},
+			{SensorType::CONVERTER, {SensorName::ADS1115}}
 		};
 	};
 }

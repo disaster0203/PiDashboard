@@ -54,10 +54,10 @@ void hal::Sensor::configure(const SensorSetting setting, const std::string& conf
 		dynamic_cast<sensors::i2c::ccs811::CCS811*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::KY_018:
-		dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->configure(setting, configuration);
+		dynamic_cast<sensors::analog::ky018::KY018*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::ADS1115:
-		//static_cast<sensors::analog::ky018::KY018*>(m_sensor)->configure(setting, configuration);
+		dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->configure(setting, configuration);
 		break;
 	case SensorName::AM312:
 		dynamic_cast<sensors::digital::am312::AM312*>(m_sensor)->configure(setting, configuration);
@@ -90,10 +90,10 @@ std::string hal::Sensor::get_configuration(const SensorSetting setting)
 		result = dynamic_cast<sensors::i2c::ccs811::CCS811*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::KY_018:
-		result = dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->get_configuration(setting);
+		result = dynamic_cast<sensors::analog::ky018::KY018*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::ADS1115:
-		//result = static_cast<sensors::analog::ky018::KY018*>(m_sensor)->get_configuration(setting);
+		result = dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::AM312:
 		result = dynamic_cast<sensors::digital::am312::AM312*>(m_sensor)->get_configuration(setting);
@@ -127,10 +127,10 @@ std::vector<hal::SensorSetting> hal::Sensor::available_configurations()
 		result = static_cast<sensors::i2c::ccs811::CCS811*>(m_sensor)->available_configurations();
 		break;
 	case SensorName::KY_018:
-		result = static_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->available_configurations();
+		result = static_cast<sensors::analog::ky018::KY018*>(m_sensor)->available_configurations();
 		break;
 	case SensorName::ADS1115:
-		//result = static_cast<sensors::analog::ky018::KY018*>(m_sensor)->available_configurations();
+		result = static_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->available_configurations();
 		break;
 	case SensorName::AM312:
 		result = static_cast<sensors::digital::am312::AM312*>(m_sensor)->available_configurations();
