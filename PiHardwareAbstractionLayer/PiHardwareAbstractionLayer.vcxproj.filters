@@ -121,6 +121,9 @@
     <ClInclude Include="interfaces\IConverter.h">
       <Filter>interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="sensors\analog\MICS6814.h">
+      <Filter>sensors\analog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="sensors">

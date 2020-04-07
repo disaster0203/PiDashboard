@@ -90,6 +90,7 @@
     <ClInclude Include="Sensor.h" />
     <ClInclude Include="SensorManager.h" />
     <ClInclude Include="sensors\analog\KY018.h" />
+    <ClInclude Include="sensors\analog\MICS6814.h" />
     <ClInclude Include="sensors\digital\AM312.h" />
     <ClInclude Include="sensors\i2c\ADS1115.h" />
     <ClInclude Include="sensors\i2c\ADS1115Constants.h" />
