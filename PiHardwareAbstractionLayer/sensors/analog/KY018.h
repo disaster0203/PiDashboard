@@ -22,9 +22,9 @@ namespace hal
 		{
 			namespace ky018
 			{
-				//! Class that communicates with the KY-018 analog photo sensor via an analog-digital sensor.
+				//! Class that communicates with the KY-018 analog photo sensor via an analog-digital converter.
 				/*!
-				* This class implements functions to read the sensors data by using an ad converter.
+				* This class implements functions to read the sensors data by using an AD converter.
 				*/
 				class KY018 final : public interfaces::ISensor
 				{
@@ -250,7 +250,7 @@ namespace hal
 								// Set multiplexer
 								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_multiplexer_setting(multiplexer);
 								// For simplicity set gain amplifier always to 2048mV
-								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_gain_amplifier_setting(sensors::i2c::ads1115::GainAmplifier::GAIN_2048_mV);
+								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->set_gain_amplifier_setting(sensors::i2c::ads1115::GainAmplifier::GAIN_6144_mV);
 								// Trigger new conversion
 								dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_converter)->start_single_conversion();
 								// Receive the new voltage data from the ADS1115
@@ -296,7 +296,7 @@ namespace hal
 						}
 					}
 
-				private:
+				protected:
 					interfaces::IConverter* m_converter;
 					uint8_t m_analog_pin;
 					double m_max_voltage = 5.0;

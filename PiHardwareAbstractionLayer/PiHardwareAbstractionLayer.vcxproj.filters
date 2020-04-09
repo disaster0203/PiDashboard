@@ -21,6 +21,9 @@
     <ClCompile Include="sensors\i2c\DS3231.cpp">
       <Filter>sensors\i2c</Filter>
     </ClCompile>
+    <ClCompile Include="sensors\analog\MICS6814.cpp">
+      <Filter>sensors\analog</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sensors\i2c\CCS811.h">

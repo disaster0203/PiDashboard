@@ -116,6 +116,7 @@
   <ItemGroup>
     <ClCompile Include="Sensor.cpp" />
     <ClCompile Include="SensorManager.cpp" />
+    <ClCompile Include="sensors\analog\MICS6814.cpp" />
     <ClCompile Include="sensors\digital\AM312.cpp" />
     <ClCompile Include="sensors\i2c\ADS1115.cpp" />
     <ClCompile Include="sensors\i2c\BME280.cpp" />
