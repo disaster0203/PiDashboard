@@ -124,13 +124,45 @@ void hal::SensorManager::create_hardware_pointer(const SensorType type, SensorNa
 	break;
 	case SensorName::CCS811:
 	{
-		if (type == SensorType::CO2 || type == SensorType::TVOC)
+		if (type == SensorType::CARBON_DIOXIDE_CO2 || type == SensorType::TVOC)
 		{
 			auto sensor = new sensors::i2c::ccs811::CCS811();
 			sensor->init(true, 4, 5); // Todo add correct pin numbers (wake, i2c)
 			sensor->start();
 			sensor->set_operation_mode(sensors::i2c::ccs811::OperationMode::CONSTANT_POWER_1_S, false, false);
 			m_hardware_map[std::make_pair(name, pin)] = sensor;
+		}
+		else
+		{
+			throw exception::HALException("SensorManager", "create_hardware_pointer",
+				"Invalid combination of sensor name (CCS811) and sensor type.");
+		}
+	}
+	break;
+	case SensorName::MICS6814:
+	{
+		if (type == SensorType::CARBON_MONOXIDE_CO || type == SensorType::NITROGEN_DIOXIDE_NO2 || type == SensorType::AMMONIAC_NH3 || 
+			type == SensorType::PROPANE_C3H8 || type == SensorType::BUTANE_C4H10 || type == SensorType::METHANE_CH4 ||
+			type == SensorType::HYDROGEN_H2 || type == SensorType::ETHANOL_C2H5OH)
+		{
+			if (!is_hardware_running(SensorName::ADS1115, 3)) // && is_hardware_running(SensorName::Converter_XYZ, 3) || ...
+			{
+				create_hardware_pointer(SensorType::CONVERTER, available_sensors_of_type(SensorType::CONVERTER)[0], 3);
+			}
+
+			if (is_hardware_running(SensorName::ADS1115, 3))
+			{
+				auto sensor = new sensors::analog::mics6814::MICS6814();
+				dynamic_cast<interfaces::IConverter*>(m_hardware_map[std::make_pair(SensorName::ADS1115, 3)])->register_analog_device(pin);
+				sensor->init(dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_hardware_map[std::make_pair(SensorName::ADS1115, 3)]), pin);
+				m_hardware_map[std::make_pair(name, pin)] = sensor;
+			}
+			// if (is_hardware_running(SensorName::Converter_XYZ, 3)) { ... }
+			else
+			{
+				throw exception::HALException("SensorManager", "create_hardware_pointer",
+					"No AD-converter found for analog sensor 'KY-018'.");
+			}
 		}
 		else
 		{

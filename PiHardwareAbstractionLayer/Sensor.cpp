@@ -1,5 +1,6 @@
 ﻿#include "Sensor.h"
 #include "sensors/analog/KY018.h"
+#include "sensors/analog/MICS6814.h"
 #include "sensors/digital/AM312.h"
 #include "sensors/i2c/ADS1115.h"
 #include "sensors/i2c/BME280.h"
@@ -56,6 +57,9 @@ void hal::Sensor::configure(const SensorSetting setting, const std::string& conf
 	case SensorName::KY_018:
 		dynamic_cast<sensors::analog::ky018::KY018*>(m_sensor)->configure(setting, configuration);
 		break;
+	case SensorName::MICS6814:
+		dynamic_cast<sensors::analog::mics6814::MICS6814*>(m_sensor)->configure(setting, configuration);
+		break;
 	case SensorName::ADS1115:
 		dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->configure(setting, configuration);
 		break;
@@ -91,6 +95,9 @@ std::string hal::Sensor::get_configuration(const SensorSetting setting)
 		break;
 	case SensorName::KY_018:
 		result = dynamic_cast<sensors::analog::ky018::KY018*>(m_sensor)->get_configuration(setting);
+		break;
+	case SensorName::MICS6814:
+		result = dynamic_cast<sensors::analog::mics6814::MICS6814*>(m_sensor)->get_configuration(setting);
 		break;
 	case SensorName::ADS1115:
 		result = dynamic_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->get_configuration(setting);
@@ -128,6 +135,9 @@ std::vector<hal::SensorSetting> hal::Sensor::available_configurations()
 		break;
 	case SensorName::KY_018:
 		result = static_cast<sensors::analog::ky018::KY018*>(m_sensor)->available_configurations();
+		break;
+	case SensorName::MICS6814:
+		result = static_cast<sensors::analog::mics6814::MICS6814*>(m_sensor)->available_configurations();
 		break;
 	case SensorName::ADS1115:
 		result = static_cast<sensors::i2c::ads1115::ADS1115*>(m_sensor)->available_configurations();
